@@ -1,0 +1,14 @@
+FROM neo4j:4.0.4
+
+ENV NEO4J_apoc_import_file_enabled=true
+ENV NEO4J_apoc_export_file_enabled=true
+ENV NEO4JLABS_PLUGINS='["apoc"]'
+ENV apoc.initializer.cypher.1='CALL apoc.cypher.runSchemaFile("schema.cypher")'
+ENV apoc.initializer.cypher.2='CALL apoc.cypher.runFile("init.cypher")'
+
+COPY cypher/init.cypher /var/lib/neo4j/import/init.cypher
+COPY cypher/schema.cypher /var/lib/neo4j/import/schema.cypher
+
+EXPOSE 7474 7473 7687
+
+CMD ["neo4j"]

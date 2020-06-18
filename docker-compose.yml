@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+    neo:
+        build: 
+            context: ./neo
+            dockerfile: Dockerfile.Neo
+        ports:
+            - "7474:7474"
+            - "7687:7687"
+            - "7473:7473"
+        environment:
+            - NEO4J_AUTH=neo4j/demo1234
+    hiarc:
+        depends_on:
+            - neo
+        build: 
+            context: .
+            dockerfile: Dockerfile.Hiarc
+        ports:
+          - target: 80
+            published: 5000
+            protocol: tcp
+            mode: host

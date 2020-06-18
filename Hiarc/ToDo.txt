@@ -1,0 +1,32 @@
+########################
+#         ToDo         #
+########################
+- do we want to use apoc.atomic for all property updates?
+- add logging for all query calls to Neo4j
+- update the InvalidOperation stuff in the controllers (needs to be everywhere)
+- investigate making file versions a linked list
+- Nullable model fields (seems to be working, actually)
+- auto-created keys
+- adjust permissions for Groups, Collections, etc
+- decide what to return for PUT requests
+- deal with options.RequireHttpsMetadata = false for JWT stuff
+- figure out "correct" logging emission
+
+########################
+#         Done         #
+########################
+- add datetime support to metadata and metadata querying
+- constants for property names (all Neo4j names really)
+- add AddGroupToFile method
+- deal with errors in Cypher queries
+- take another look at the Add* request models to see if we want to just use keys 
+- event system
+- query for metadata
+- upgrade to Neo4j Driver 4.0.0
+- Copy files
+- Timestamps (CreatedAt, ModifiedAt)
+- File versions
+- Abstract Graph engine behind interface
+- user-level permissions (extract user from JWT)
+- actually upload files and versions
+- add validators for Where clause stuff
