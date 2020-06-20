@@ -21,10 +21,10 @@ namespace Hiarc.Core.Events
 
     public class HiarcEventServiceProvider : IEventServiceProvider
     {
-        private const string AWS_KINESIS = "AWS-Kinesis";
-        private const string AZURE_SERVICE_BUS = "Azure-ServiceBus";
-        private const string GOOGLE_PUBSUB = "Google-PubSub";
-        private const string WEBHOOK = "Webhook";
+        public const string AWS_KINESIS = "AWS-Kinesis";
+        public const string AZURE_SERVICE_BUS = "Azure-ServiceBus";
+        public const string GOOGLE_PUBSUB = "Google-PubSub";
+        public const string WEBHOOK = "Webhook";
 
         public const string EVENT_USER_CREATED = "userCreated";
         public const string EVENT_USER_UPDATED = "userUpdated";
