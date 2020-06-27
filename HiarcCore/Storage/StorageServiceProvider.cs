@@ -10,6 +10,7 @@ using Hiarc.Core.Storage.Google;
 using Hiarc.Core.Storage.AWS;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Hiarc.Core.Storage.IPFS;
 
 namespace Hiarc.Core.Storage
 {
@@ -19,6 +20,7 @@ namespace Hiarc.Core.Storage
         public const string AWS_S3 = "AWS-S3";
         public const string AZURE_BLOB_STORAGE = "Azure-Blob";
         public const string GOOGLE_STORAGE = "Google-Storage";
+        public const string IPFS = "IPFS";
 
         private Dictionary<string, IStorageService> _storageServices;
 
@@ -104,6 +106,11 @@ namespace Hiarc.Core.Storage
 
                     IStorageService googleService = new GoogleStorageService(ss.Name, googleSettings, _logger);
                     _storageServices.Add(ss.Name, googleService);
+                }
+                else if (ss.Provider == IPFS)
+                {
+                    IStorageService ipfsService = new IPFSStorageService(ss.Name, _logger);
+                    _storageServices.Add(ss.Name, ipfsService);
                 }
                 else
                 {

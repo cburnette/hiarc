@@ -33,6 +33,17 @@ namespace HiarcIntegrationTest.Tests
         }
 
         [Fact]
+        public async void IPFS()
+        {
+            var originalPath = _hiarc.BuildPath(TEST_FILE_TINY);
+            var downloadedPath = _hiarc.BuildPath($"Downloaded-{TEST_FILE_TINY}");
+
+            var f1 = await _hiarc.CreateFile(originalPath, storageService: "ipfs");
+            await _hiarc.DownloadFile(f1.Key, downloadedPath);      
+            AssertFileHash(originalPath, downloadedPath);
+        }
+
+        [Fact]
         public async void FileVersions()
         {
             var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
