@@ -21,3 +21,6 @@ services:
             published: 5000
             protocol: tcp
             mode: host
+        environment: 
+            - HIARC_CONFIG_STRATEGY=env
+            - HIARC_SETTINGS=<base64 encoded json>

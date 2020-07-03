@@ -60,3 +60,115 @@ Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to co
 * **Retention Policies** - A key piece of highly regulated workflows, retention policies can be applied to files, ensuring that the file cannot be deleted until a certain period of time has gone by.  Retention policies, once applied, can never be removed, and the retention period can be extended but never shortened.  If a file has multiple policies applied, Hiarc will calculate the longest retention period and enforce it.
 
 * **Classifications** - To make things even easier, Hiarc provides classifications which can be applied to files or collections.  A classification can specify retention policies that should be applied to a specific file, or to any file that ever becomes a member of a designated collection.  Even if the file is later removed from the collection the classification remains.  Classifications can be explicitly removed, but any retention policies applied will remain.
+
+### Settings
+
+Use the following environment variables to configure Hiarc:
+
+- `HIARC_CONFIG_STRATEGY=env`
+- `HIARC_SETTINGS=<base64 encoded json>`
+
+If using `docker-compose` update `HIARC_SETTINGS` before running `docker-compose up`.
+
+Assuming your settings are in a file called `settings.json`, use these commands to generate your Hiarc settings:
+```sh
+cat settings.json | base64 > settings.txt
+```
+
+Copy the string in `settings.txt` and replace `HIARC_SETTINGS=<base64 encoded json>`.
+
+`HIARC_SETTINGS` must be a base64 encoded JSON string. If you use the follow example, be sure to replace any values formatted like this: `<value>`. These are the following settings Hiarc supports:
+
+```json
+{
+    "BaseUri": "http://localhost:5000",
+    "JwtSigningKey": "<provide key value>",
+    "AdminApiKey": "<provide key value>",
+    "ForceHTTPS": false,
+    "JWTTokenExpirationMinutes": 43200,
+    "Database": {
+        "Uri": "bolt://localhost:7687",
+        "Username": "neo4j",
+        "Password": "<password>"
+    },
+    "EventServices": [
+        {
+            "Provider": "Webhook",
+            "Name": "webhook.site",
+            "Enabled": false,
+            "Config": {
+                "URL": "<site url>",
+                "Secret": "<secret>"
+            }
+        },
+        {
+            "Provider": "AWS-Kinesis",
+            "Name": "hiarc-aws-kinesis",
+            "Enabled": false,
+            "Config": {
+                "AccessKeyId": "<key>",
+                "SecretAccessKey": "<secret>",
+                "RegionSystemName": "us-east-1",
+                "Stream": "hiarc-test"
+            }
+        },
+        {
+            "Provider": "Azure-ServiceBus",
+            "Name": "hiarc-azure-servicebus",
+            "Enabled": false,
+            "Config": {
+                "ConnectionString": "<connection string>",
+                "Topic": "hiarc"
+            }
+        },
+        {
+            "Provider": "Google-PubSub",
+            "Name": "hiarc-google-pubsub",
+            "Enabled": false,
+            "Config": {
+                "ServiceAccountCredential": "<creds>",
+                "ProjectId": "<project id>",
+                "Topic": "hiarc"
+            }
+        }
+    ],
+    "StorageServices": [
+        {
+            "Provider": "AWS-S3",
+            "Name": "hiarc-aws-s3-east",
+            "IsDefault": true,
+            "Config": {
+                "AccessKeyId": "<key>",
+                "SecretAccessKey": "<secret>",
+                "RegionSystemName": "us-east-1",
+                "Bucket": "hiarc-test"
+            }
+        },
+        {
+            "Provider": "Azure-Blob",
+            "Name": "hiarc-azure-blob-1",
+            "IsDefault": false,
+            "Config": {
+                "StorageConnectionString": "<connection string>",
+                "Container": "hiarc-test"
+            }
+        },
+        {
+            "Provider": "Google-Storage",
+            "Name": "hiarc-google-storage-east",
+            "IsDefault": false,
+            "Config": {
+                "ServiceAccountCredential": "<creds>",
+                "Bucket": "hiarc-test"
+            }
+        }
+    ]
+}
+```
+
+When running Hiarc locally and with these settings saved to a file and assuming the file is named settings.json, you can use the follow `bash` script to generate a base64 encoded string:
+
+```sh
+export HIARC_CONFIG_STRATEGY=env
+export HIARC_SETTINGS=$(cat settings.json | base64)
+```
