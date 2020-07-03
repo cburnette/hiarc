@@ -1,32 +1,39 @@
+using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+using Hiarc.Core.Settings.Storage.IPFS;
 using Ipfs.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Hiarc.Core.Storage.IPFS
 {
     public class IPFSStorageService : IStorageService
     {
-        private readonly ILogger<StorageServiceProvider> _logger;
-
+        public readonly IPFSSettings IPFSSettings;
         public string Type { get; }
         public string Name { get; }
         public bool SupportsDirectDownload { get; }
         public bool SupportsDirectUpload { get; }
 
-        public IPFSStorageService(string name, ILogger<StorageServiceProvider> logger)
+        private readonly IpfsClient _client;
+        private readonly ILogger<StorageServiceProvider> _logger;
+
+        public IPFSStorageService(string name, IOptions<IPFSSettings> ipfsSettings, ILogger<StorageServiceProvider> logger)
         {
             Type = StorageServiceProvider.IPFS;
             Name = name;
+            IPFSSettings = ipfsSettings.Value;
             SupportsDirectDownload = false;
             SupportsDirectUpload = false;
+            _client = new IpfsClient(IPFSSettings.Host);
             _logger = logger;
         }
         
         public async Task<IFileInformation> StoreFile(Stream fileStream)
         {
-            var ipfs = new IpfsClient("http://127.0.0.1:5005");
-            var storedFile = await ipfs.FileSystem.AddAsync(fileStream);
+            var storedFile = await _client.FileSystem.AddAsync(fileStream);
 
             var info = new IPFSFileInformation { StorageIdentifier = storedFile.Id };
             return info;
@@ -34,8 +41,8 @@ namespace Hiarc.Core.Storage.IPFS
 
         public async Task<Stream> RetrieveFile(string identifier)
         {
-            var ipfs = new IpfsClient("http://127.0.0.1:5005");
-            return await ipfs.FileSystem.ReadFileAsync(identifier);
+            var cancel = default(CancellationToken);
+            return await _client.PostDownloadAsync("cat", cancel, arg: identifier);
         }
 
         public async Task<string> GetDirectDownloadUrl(string identifier, int expiresInSeconds)

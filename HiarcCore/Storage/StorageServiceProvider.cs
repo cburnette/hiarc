@@ -11,6 +11,7 @@ using Hiarc.Core.Storage.AWS;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Hiarc.Core.Storage.IPFS;
+using Hiarc.Core.Settings.Storage.IPFS;
 
 namespace Hiarc.Core.Storage
 {
@@ -109,7 +110,14 @@ namespace Hiarc.Core.Storage
                 }
                 else if (ss.Provider == IPFS)
                 {
-                    IStorageService ipfsService = new IPFSStorageService(ss.Name, _logger);
+                    var settings = new IPFSSettings
+                    {
+                        Host = ((dynamic)ss.Config).Host
+                    };
+
+                    IOptions<IPFSSettings> ipfsSettings = Options.Create(settings);
+
+                    IStorageService ipfsService = new IPFSStorageService(ss.Name, ipfsSettings, _logger);
                     _storageServices.Add(ss.Name, ipfsService);
                 }
                 else
