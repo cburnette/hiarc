@@ -69,14 +69,14 @@ Use the following environment variables to configure Hiarc:
 
 If using `docker-compose` update `HIARC_SETTINGS` before running `docker-compose up`.
 
-Assuming your settings are in a file called `settings.json`, use these commands to generate your Hiarc settings:
+Assuming your settings are in a file called `appsettings.json`, use this command to generate your Hiarc settings:
 ```sh
-cat settings.json | base64 > settings.txt
+cat appsettings.json | base64 > appsettings.txt
 ```
 
-Copy the string in `settings.txt` and replace `HIARC_SETTINGS=<base64 encoded json>`.
+Copy the string in `appsettings.txt` and replace `HIARC_SETTINGS=<base64 encoded json>`.
 
-`HIARC_SETTINGS` must be a base64 encoded JSON string. If you use the follow example, be sure to replace any values formatted like this: `<value>`. These are the following settings Hiarc supports:
+`HIARC_SETTINGS` must be a base64 encoded JSON string. If you use the following example, be sure to replace any values formatted like this: `<value>`. These are the following settings Hiarc supports:
 
 ```json
 {
@@ -165,9 +165,9 @@ Copy the string in `settings.txt` and replace `HIARC_SETTINGS=<base64 encoded js
 }
 ```
 
-When running Hiarc locally and with these settings saved to a file and assuming the file is named settings.json, you can use the follow `bash` script to generate a base64 encoded string:
+When running Hiarc locally and with these settings saved to a file named appsettings.json, you can use the follow `bash` script to generate a base64 encoded string and set the appropriate environment variables:
 
 ```sh
 export HIARC_CONFIG_STRATEGY=env
-export HIARC_SETTINGS=$(cat settings.json | base64)
+export HIARC_SETTINGS=$(cat appsettings.json | base64)
 ```
