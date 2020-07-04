@@ -14,7 +14,7 @@ namespace HiarcIntegrationTest
 {
     public class HiarcClient
     {
-        const string API_KEY = "b7kNAC4xoe3QiAnLkplIjmfL3II+OX5EYHNxbwSuy7s=";
+        const string API_KEY = "adminkey";
         const string API_KEY_HEADER_NAME = "X-Hiarc-Api-Key";
         const string AS_USER_HEADER_NAME = "X-Hiarc-User-Key";
         const string BASE_URI = "http://localhost:5000";
