@@ -81,19 +81,19 @@ Copy the string in `settings.txt` and replace `HIARC_SETTINGS=<base64 encoded js
 ```json
 {
     "BaseUri": "http://localhost:5000",
-    "JwtSigningKey": "<provide key value>",
-    "AdminApiKey": "<provide key value>",
+    "JwtSigningKey": "<jwt-signing-key>",
+    "AdminApiKey": "<admin-api-key>",
     "ForceHTTPS": false,
     "JWTTokenExpirationMinutes": 43200,
     "Database": {
-        "Uri": "bolt://localhost:7687",
-        "Username": "neo4j",
-        "Password": "<password>"
+        "Uri": "<uri-for-neo4j>",
+        "Username": "<neo4j-username>",
+        "Password": "<neo4j-password>"
     },
     "EventServices": [
         {
             "Provider": "Webhook",
-            "Name": "webhook.site",
+            "Name": "<name>",
             "Enabled": false,
             "Config": {
                 "URL": "<site url>",
@@ -102,63 +102,63 @@ Copy the string in `settings.txt` and replace `HIARC_SETTINGS=<base64 encoded js
         },
         {
             "Provider": "AWS-Kinesis",
-            "Name": "hiarc-aws-kinesis",
+            "Name": "<name>",
             "Enabled": false,
             "Config": {
                 "AccessKeyId": "<key>",
                 "SecretAccessKey": "<secret>",
-                "RegionSystemName": "us-east-1",
-                "Stream": "hiarc-test"
+                "RegionSystemName": "<region-name>",
+                "Stream": "<stream>"
             }
         },
         {
             "Provider": "Azure-ServiceBus",
-            "Name": "hiarc-azure-servicebus",
+            "Name": "<name>",
             "Enabled": false,
             "Config": {
-                "ConnectionString": "<connection string>",
-                "Topic": "hiarc"
+                "ConnectionString": "<connection-string>",
+                "Topic": "<topic>"
             }
         },
         {
             "Provider": "Google-PubSub",
-            "Name": "hiarc-google-pubsub",
+            "Name": "<name>",
             "Enabled": false,
             "Config": {
                 "ServiceAccountCredential": "<creds>",
-                "ProjectId": "<project id>",
-                "Topic": "hiarc"
+                "ProjectId": "<project-id>",
+                "Topic": "<topic>"
             }
         }
     ],
     "StorageServices": [
         {
             "Provider": "AWS-S3",
-            "Name": "hiarc-aws-s3-east",
+            "Name": "<name>",
             "IsDefault": true,
             "Config": {
                 "AccessKeyId": "<key>",
                 "SecretAccessKey": "<secret>",
-                "RegionSystemName": "us-east-1",
-                "Bucket": "hiarc-test"
+                "RegionSystemName": "<region-name>",
+                "Bucket": "<bucket-name>"
             }
         },
         {
             "Provider": "Azure-Blob",
-            "Name": "hiarc-azure-blob-1",
+            "Name": "<name>",
             "IsDefault": false,
             "Config": {
                 "StorageConnectionString": "<connection string>",
-                "Container": "hiarc-test"
+                "Container": "container-name"
             }
         },
         {
             "Provider": "Google-Storage",
-            "Name": "hiarc-google-storage-east",
+            "Name": "<name>",
             "IsDefault": false,
             "Config": {
-                "ServiceAccountCredential": "<creds>",
-                "Bucket": "hiarc-test"
+                "ServiceAccountCredential": "<credentials>",
+                "Bucket": "<bucket-name>"
             }
         }
     ]
