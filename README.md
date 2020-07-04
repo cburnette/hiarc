@@ -9,18 +9,6 @@ Hiarc is an API that orchestrates all of your enterprise content requirements ac
 
 Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to come).  By leveraging the cloud infrastructure you already use, Hiarc leaves critical data under your control.  Every file and every event resides in your infrastructure, with Hiarc providing the connective tissue around permissions, organization, access, and scale.
 
-### Supported Cloud Infrastructure
-* Storage Services
-  * AWS
-  * Azure
-  * Google Cloud
-  * IPFS
-* Event Services
-  * Amazon Kinesis
-  * Azure Service Bus
-  * Google PubSub
-  * Webhooks
-
 ### Why Use Hiarc?
 * **Elevate Your Cloud** - Hiarc is designed as a modern API layer that sits on top of your existing cloud infrastructure.  Amazon, Microsoft, and Google have spend billions perfecting simple, robust file storage systems. However, these systems lack granular control, hierarchical permissions, complex metadata, per-file retention policies and other features needed to facilitate Enterprise workflows.  Hiarc gives you those features while letting you own the underlying cloud infrastructure. You don't need to expose your critical data to another company.
 
@@ -32,7 +20,18 @@ Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to co
 
 * **Massive Scalability** - Hiarc leverages a powerful, industry-leading graph database that supports billions of objects and is able to perform queries in milliseconds that would take SQL and NoSQL databases minutes because of their recursive nature.  Coupled with the incredible scale of cloud content services, Hiarc can power your largest workflows.
 
-
+### Supported Cloud Infrastructure
+* Storage Services
+  * AWS
+  * Azure
+  * Google Cloud
+  * IPFS
+* Event Services
+  * Amazon Kinesis
+  * Azure Service Bus
+  * Google PubSub
+  * Webhooks
+  
 ### Key Concepts
 * **A Key for Everything** - Every object in Hiarc is uniquely identified by an application specified key.  Similar to key-value stores like Redis or Memcached, Hiarc supports efficient object lookup by letting you construct keys using data you already have. For example, you could create a collection for collaborating between a financial advisor and a client.  The key could be ```"/portal/{advisorId}/{clientId}"```.  When you need the list of files in the collection you simply ask Hiarc using the key you know how to construct.  No need to store IDs in yet another database.
 
