@@ -356,15 +356,19 @@ namespace Hiarc.Api.REST.Controllers
                 {
                     var theFile = await _hiarcDatabase.GetFile(fileKey);
                     var latestFileVersion = await _hiarcDatabase.GetLatestVersionForFile(fileKey);
+                    var storageService = _storageServiceProvider.Service(latestFileVersion.StorageService);
+                    _logger.LogDebug($"storageService: {storageService}");
 
-                    if (_storageServiceProvider.Service(latestFileVersion.StorageService).SupportsDirectDownload)
+                    if (storageService.SupportsDirectDownload)
                     {
-                        var directDownloadUrl = await _storageServiceProvider.Service(latestFileVersion.StorageService).GetDirectDownloadUrl(latestFileVersion.StorageId, IStorageService.DEFAULT_EXPIRES_IN_SECONDS);
+                        var directDownloadUrl = await storageService.GetDirectDownloadUrl(latestFileVersion.StorageId, IStorageService.DEFAULT_EXPIRES_IN_SECONDS);
                         return new RedirectResult(directDownloadUrl, false); 
                     }
                     else
                     {
-                        var stream = await _storageServiceProvider.Service(latestFileVersion.StorageService).RetrieveFile(latestFileVersion.StorageId);
+                        _logger.LogDebug($"about to retrieve file");
+                        using var stream = await storageService.RetrieveFile(latestFileVersion.StorageId);
+                        _logger.LogDebug($"stream: {stream}");
                         return File(stream, "application/octet-stream", theFile.Name);
                     }    
                 }
