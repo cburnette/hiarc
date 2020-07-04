@@ -409,7 +409,6 @@ namespace Hiarc.Api.REST.Controllers
                 return BuildErrorResponse(ex, _logger);
             }
         }
-
         
         [HttpGet("{fileKey}/directdownloadurl")]
         public async Task<IActionResult> GetDirectDownloadUrl(string fileKey, [FromQuery(Name = "expiresInSeconds")] int? expiresInSeconds)
