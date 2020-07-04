@@ -128,11 +128,11 @@ namespace HiarcIntegrationTest.Tests
             var originalPath = _hiarc.BuildPath(TEST_FILE_TINY);
             var downloadedPath = _hiarc.BuildPath($"Downloaded-{TEST_FILE_TINY}");
 
-            var f1 = await _hiarc.CreateFile(originalPath, storageService: "ipfs");
+            var f1 = await _hiarc.CreateFile(originalPath); //, storageService: "ipfs");
             await _hiarc.DownloadFile(f1.Key, downloadedPath);      
             this.AssertFileHash(originalPath, downloadedPath);
             
-            //System.IO.File.Delete(downloadedPath);
+            System.IO.File.Delete(downloadedPath);
             await _hiarc.DeleteFile(f1.Key);
         }
 
