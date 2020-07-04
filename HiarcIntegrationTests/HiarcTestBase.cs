@@ -14,7 +14,8 @@ namespace HiarcIntegrationTest
         public const string AZURE_STORAGE_2 = "hiarc-azure-blob-2";
         public const string GOOGLE_EAST_STORAGE = "hiarc-google-storage-east";
         public const string GOOGLE_WEST_STORAGE = "hiarc-google-storage-west";
-
+        public static readonly List<string> All_STORAGE_SERVICES = new List<string> {AWS_EAST_STORAGE, AWS_WEST_STORAGE, AZURE_STORAGE_1, AZURE_STORAGE_2, GOOGLE_EAST_STORAGE, GOOGLE_WEST_STORAGE };
+        
         public const string TEST_FILE_TINY = "Test.txt";
         public const string TEST_FILE_TINY_NEW_VERSION = "NewVersionOfTest.txt";
         public const int LARGE_ENTITY_COUNT = 10;

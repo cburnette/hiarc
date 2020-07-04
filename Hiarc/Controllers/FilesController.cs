@@ -357,7 +357,6 @@ namespace Hiarc.Api.REST.Controllers
                     var theFile = await _hiarcDatabase.GetFile(fileKey);
                     var latestFileVersion = await _hiarcDatabase.GetLatestVersionForFile(fileKey);
                     var storageService = _storageServiceProvider.Service(latestFileVersion.StorageService);
-                    _logger.LogDebug($"storageService: {storageService}");
 
                     if (storageService.SupportsDirectDownload)
                     {
@@ -366,9 +365,7 @@ namespace Hiarc.Api.REST.Controllers
                     }
                     else
                     {
-                        _logger.LogDebug($"about to retrieve file");
-                        using var stream = await storageService.RetrieveFile(latestFileVersion.StorageId);
-                        _logger.LogDebug($"stream: {stream}");
+                        var stream = await storageService.RetrieveFile(latestFileVersion.StorageId);
                         return File(stream, "application/octet-stream", theFile.Name);
                     }    
                 }

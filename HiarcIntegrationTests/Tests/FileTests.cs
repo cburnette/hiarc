@@ -125,15 +125,18 @@ namespace HiarcIntegrationTest.Tests
         [Fact]
         public async void DownloadFile()
         {
-            var originalPath = _hiarc.BuildPath(TEST_FILE_TINY);
-            var downloadedPath = _hiarc.BuildPath($"Downloaded-{TEST_FILE_TINY}");
+            foreach(var ss in All_STORAGE_SERVICES)
+            {
+                var originalPath = _hiarc.BuildPath(TEST_FILE_TINY);
+                var downloadedPath = _hiarc.BuildPath($"Downloaded-{TEST_FILE_TINY}");
 
-            var f1 = await _hiarc.CreateFile(originalPath); //, storageService: "ipfs");
-            await _hiarc.DownloadFile(f1.Key, downloadedPath);      
-            this.AssertFileHash(originalPath, downloadedPath);
-            
-            System.IO.File.Delete(downloadedPath);
-            await _hiarc.DeleteFile(f1.Key);
+                var f1 = await _hiarc.CreateFile(originalPath, storageService: ss);
+                await _hiarc.DownloadFile(f1.Key, downloadedPath);      
+                this.AssertFileHash(originalPath, downloadedPath);
+                
+                System.IO.File.Delete(downloadedPath);
+                await _hiarc.DeleteFile(f1.Key);
+            }       
         }
 
         [Fact]
