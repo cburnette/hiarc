@@ -17,6 +17,5 @@
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.1" />
     <PackageReference Include="Google.Cloud.Storage.V1" Version="2.4.0-beta04" />
     <PackageReference Include="Google.Cloud.PubSub.V1" Version="1.2.0-beta01" />
-    <PackageReference Include="Ipfs.Http.Client" Version="0.33.0" />
   </ItemGroup>
 </Project>

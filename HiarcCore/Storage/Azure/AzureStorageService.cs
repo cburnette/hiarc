@@ -63,17 +63,19 @@ namespace Hiarc.Core.Storage.Azure
 
         public async Task<string> GetDirectDownloadUrl(string identifier, int expiresInSeconds)
         {
+            throw new NotImplementedException();
+
             // var userDelegationKey = await _blobClient.GetUserDelegationKeyAsync(DateTimeOffset.UtcNow, DateTimeOffset.Now.AddSeconds(expiresInSeconds));
             // SharedAccessBlobPolicy blah = new SharedAccessBlobPolicy();
             // SharedAccessBlobPermissions perms = new SharedAccessBlobPermissions();
             // perms.
             // BlobContainer.GetSharedAccessSignature()
-            return null;
+            // return null;
         }
 
         public async Task<string> GetDirectUploadUrl(string identifier, int expiresInSeconds)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<IFileInformation> CopyFileToSameServiceType(string identifier, IStorageService destinationService)

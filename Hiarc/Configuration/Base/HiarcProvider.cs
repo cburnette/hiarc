@@ -22,18 +22,21 @@ namespace Hiarc.Configuration.Base
         }
         public async Task LoadAsync()
         {
-            var loadSettings = Environment.GetEnvironmentVariable(STRATEGY_SETTING) != null ? Environment.GetEnvironmentVariable(STRATEGY_SETTING) : APPSETTINGS_STRATEGY;
-            switch (loadSettings)
+            await Task.Run( () =>
             {
-                case APPSETTINGS_STRATEGY:
-                    break;
-                case ENVIRONMENT_STRATEGY:
-                    var ctx = new HiarcConfigurationContext(new HiarcEnvironmentVariableStrategy());
-                    ctx.IncludeHiarcSettings(Set);
-                    break;
-                default:
-                    break;
-            }
+                var loadSettings = Environment.GetEnvironmentVariable(STRATEGY_SETTING) ?? APPSETTINGS_STRATEGY;
+                switch (loadSettings)
+                {
+                    case APPSETTINGS_STRATEGY:
+                        break;
+                    case ENVIRONMENT_STRATEGY:
+                        var ctx = new HiarcConfigurationContext(new HiarcEnvironmentVariableStrategy());
+                        ctx.IncludeHiarcSettings(Set);
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
     }
 }

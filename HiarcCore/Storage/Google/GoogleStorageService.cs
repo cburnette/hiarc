@@ -70,12 +70,12 @@ namespace Hiarc.Core.Storage.Google
 
         public async Task<string> GetDirectDownloadUrl(string identifier, int expiresInSeconds)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<string> GetDirectUploadUrl(string identifier, int expiresInSeconds)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public async Task<IFileInformation> CopyFileToSameServiceType(string identifier, IStorageService destinationService)
