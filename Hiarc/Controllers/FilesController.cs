@@ -125,7 +125,7 @@ namespace Hiarc.Api.REST.Controllers
                 var userKey = _contextAccessor.UserKeyFromContext();
 
                 //var contentType = file.ContentType;
-                var createFileRequest = JsonSerializer.Deserialize<CreateFileRequest>(request);
+                var createFileRequest = JsonSerializer.Deserialize<CreateFileRequest>(request, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 var storageService = _storageServiceProvider.Service(createFileRequest.StorageService);
                 createFileRequest.StorageService = storageService.Name; // fill in the StorageService field in the case that null was passed (for Default)
                 
@@ -298,7 +298,7 @@ namespace Hiarc.Api.REST.Controllers
                 if (file == null || file.Length == 0) return BadRequest();
 
                 var userKey = _contextAccessor.UserKeyFromContext();
-                var addVersionToFileRequest = JsonSerializer.Deserialize<AddVersionToFileRequest>(request);
+                var addVersionToFileRequest = JsonSerializer.Deserialize<AddVersionToFileRequest>(request, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 bool userCanAccessFile = await UserCanAccessFile(userKey, addVersionToFileRequest.Key, _hiarcDatabase, AccessLevelGroup.UploadOnlyOrHigher);
 
                 if (userCanAccessFile)

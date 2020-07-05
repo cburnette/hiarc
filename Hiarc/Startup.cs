@@ -39,6 +39,7 @@ namespace Hiarc
                 .AddJsonOptions(options => 
                 {
                     options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 });
 
             services.AddHttpContextAccessor();
