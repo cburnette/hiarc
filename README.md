@@ -3,11 +3,9 @@
 > :warning: Hiarc is currently pre-release software. If you are interested in trying it out please email <try@hiarcdb.com>
 > and we'll be happy to help you get it up and running.
 
-Hiarc is an API that orchestrates all of your enterprise content requirements across cloud environments.  It leverages a powerful graph database to scale up to billions of files and hundreds of millions of users with <100ms response times. By sitting between your application code and your cloud infrastructure, Hiarc acts as an organizational and control layer, providing key pieces of functionality required in complex Enterprise workflows
+Hiarc is an API that adds enterprise features to simple cloud storage. You can run it yourself and orchestrate all of your enterprise content requirements across cloud environments. Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to come).  By leveraging the cloud infrastructure you already use, Hiarc leaves critical data under your control.  Every file and every event resides in your infrastructure, with Hiarc providing the connective tissue around permissions, organization, access, and scale.
 
-*With Hiarc, you bring your own cloud resources.*
-
-Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to come).  By leveraging the cloud infrastructure you already use, Hiarc leaves critical data under your control.  Every file and every event resides in your infrastructure, with Hiarc providing the connective tissue around permissions, organization, access, and scale.
+Hiarc leverages a powerful graph database to scale up to billions of files and hundreds of millions of users with <100ms response times. By sitting between your application code and your cloud infrastructure, Hiarc acts as an organizational and control layer, providing key pieces of functionality required in complex enterprise workflows.
 
 ### Why Use Hiarc?
 * **Elevate Your Cloud** - Hiarc is designed as a modern API layer that sits on top of your existing cloud infrastructure.  Amazon, Microsoft, and Google have spend billions perfecting simple, robust file storage systems. However, these systems lack granular control, hierarchical permissions, complex metadata, per-file retention policies and other features needed to facilitate Enterprise workflows.  Hiarc gives you those features while letting you own the underlying cloud infrastructure. You don't need to expose your critical data to another company.
