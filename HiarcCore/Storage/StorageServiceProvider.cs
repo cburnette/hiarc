@@ -76,7 +76,7 @@ namespace Hiarc.Core.Storage
                     };
                     IOptions<S3Settings> s3Settings = Options.Create(settings);
 
-                    IStorageService s3Service = new S3StorageService(ss.Name, s3Settings, _logger);
+                    IStorageService s3Service = new S3StorageService(ss.Name, s3Settings, ss.AllowDirectDownload, ss.AllowDirectUpload,  _logger);
                     _storageServices.Add(ss.Name, s3Service);
                 }
                 else if (ss.Provider == AZURE_BLOB_STORAGE)
@@ -89,7 +89,7 @@ namespace Hiarc.Core.Storage
 
                     IOptions<AzureSettings> azureSettings = Options.Create(settings);
 
-                    IStorageService azureService = new AzureStorageService(ss.Name, azureSettings, _logger);
+                    IStorageService azureService = new AzureStorageService(ss.Name, azureSettings, ss.AllowDirectDownload, ss.AllowDirectUpload, _logger);
                     _storageServices.Add(ss.Name, azureService);
                 }
                 else if (ss.Provider == GOOGLE_STORAGE)
@@ -102,7 +102,7 @@ namespace Hiarc.Core.Storage
 
                     IOptions<GoogleSettings> googleSettings = Options.Create(settings);
 
-                    IStorageService googleService = new GoogleStorageService(ss.Name, googleSettings, _logger);
+                    IStorageService googleService = new GoogleStorageService(ss.Name, googleSettings, ss.AllowDirectDownload, ss.AllowDirectUpload, _logger);
                     _storageServices.Add(ss.Name, googleService);
                 }
                 else

@@ -19,16 +19,22 @@ namespace Hiarc.Core.Storage.Google
 
         public string Type { get; }
         public string Name { get; }
+        
         public bool SupportsDirectDownload { get; }
+        public bool AllowDirectDownload { get; set; }
+        
         public bool SupportsDirectUpload { get; }
+        public bool AllowDirectUpload { get; set; }
 
-        public GoogleStorageService(string name, IOptions<GoogleSettings> googleSettings, ILogger<StorageServiceProvider> logger)
+        public GoogleStorageService(string name, IOptions<GoogleSettings> googleSettings, bool allowDirectDownload, bool allowDirectUpload, ILogger<StorageServiceProvider> logger)
         {
             Type = StorageServiceProvider.GOOGLE_STORAGE;
             Name = name;
             GoogleSettings = googleSettings.Value;
-            SupportsDirectDownload = false;
-            SupportsDirectUpload = false;
+            SupportsDirectDownload = true;
+            AllowDirectDownload = allowDirectDownload;
+            SupportsDirectUpload = true;
+            AllowDirectUpload = allowDirectUpload;
             _logger = logger;
 
             // use a tool like this to escape the Google Service Account Credentials JSON file so you can add it to appsettings.json:
