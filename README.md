@@ -23,7 +23,7 @@ Hiarc leverages a powerful graph database to scale up to billions of files and h
   * AWS
   * Azure
   * Google Cloud
-* Event Services
+* Event & Audit Trail Services
   * Amazon Kinesis
   * Azure Service Bus
   * Google PubSub
