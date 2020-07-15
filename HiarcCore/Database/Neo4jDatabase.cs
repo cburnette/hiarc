@@ -24,7 +24,7 @@ namespace Hiarc.Core.Database
 
         private const string METADATA_PREFIX = "hiarcMeta_";
 
-        private const string LABEL_FILE = "File"; 
+        private const string LABEL_FILE = "File";
         private const string LABEL_FILE_VERSION = "FileVersion";
         private const string LABEL_COLLECTION = "Collection";
         private const string LABEL_USER = "User";
@@ -46,17 +46,26 @@ namespace Hiarc.Core.Database
         private readonly IStorageServiceProvider _storageServiceProvider;
         private readonly IDriver _neo4j;
 
-        public Neo4jDatabase(   IOptions<HiarcSettings> hiarchSettings, 
-                                IEventServiceProvider eventService, 
-                                IStorageServiceProvider storageServiceProvider, 
+        public Neo4jDatabase(IOptions<HiarcSettings> hiarchSettings,
+                                IEventServiceProvider eventService,
+                                IStorageServiceProvider storageServiceProvider,
                                 ILogger<Neo4jDatabase> logger)
         {
             _hiarcSettings = hiarchSettings.Value;
             _eventService = eventService;
             _storageServiceProvider = storageServiceProvider;
             _logger = logger;
-            _neo4j = GraphDatabase.Driver(_hiarcSettings.Database.Uri, 
-                                          AuthTokens.Basic(_hiarcSettings.Database.Username, _hiarcSettings.Database.Password));
+            if (_hiarcSettings.Database.UseEncryptedConnection)
+            {
+                _neo4j = GraphDatabase.Driver(_hiarcSettings.Database.Uri,
+                                              AuthTokens.Basic(_hiarcSettings.Database.Username, _hiarcSettings.Database.Password), 
+                                              o => o.WithEncryptionLevel(EncryptionLevel.Encrypted));
+            }
+            else
+            {
+                _neo4j = GraphDatabase.Driver(_hiarcSettings.Database.Uri,
+                                              AuthTokens.Basic(_hiarcSettings.Database.Username, _hiarcSettings.Database.Password));
+            }
         }
 
         ~Neo4jDatabase()
@@ -89,7 +98,7 @@ namespace Hiarc.Core.Database
             session = _neo4j.AsyncSession();
             await session.RunAsync($"CREATE CONSTRAINT ON (f:{LABEL_RETENTION_POLICY}) ASSERT f.key IS UNIQUE");
             await session.CloseAsync();
-            
+
             session = _neo4j.AsyncSession();
             await session.RunAsync($"CALL db.index.fulltext.createNodeIndex('userNameDescription',['{LABEL_USER}'],['name', 'description'])");
             await session.RunAsync($"CALL db.index.fulltext.createNodeIndex('groupNameDescription',['{LABEL_GROUP}'],['name', 'description'])");
@@ -144,7 +153,7 @@ namespace Hiarc.Core.Database
             {
                 await session.CloseAsync();
             }
-             
+
             var user = record["u"].As<INode>();
             var newUser = UserFromNode(user);
 
@@ -218,7 +227,7 @@ namespace Hiarc.Core.Database
             try
             {
                 var result = await session.RunAsync(query);
-     
+
                 await result.ForEachAsync((r) =>
                 {
                     var user = r["u"].As<INode>();
@@ -372,7 +381,7 @@ namespace Hiarc.Core.Database
             {
                 var result = await session.RunAsync(query);
                 await result.ForEachAsync((r) =>
-                {   
+                {
                     var createdByKey = r["u"].As<INode>()["key"].As<string>();
                     var group = r["g"].As<INode>();
                     var theGroup = GroupFromNode(group, createdByKey);
@@ -614,7 +623,7 @@ namespace Hiarc.Core.Database
             var newFile = FileFromNode(file);
 
             await _eventService.SendFileCreatedEvent(newFile);
-            
+
             return newFile;
         }
 
@@ -663,8 +672,8 @@ namespace Hiarc.Core.Database
             }
 
             var allFileVersions = await this.GetFileVersions(key);
-            
-            
+
+
             foreach (var fileVersionInfo in allFileVersions)
             {
                 var storageService = _storageServiceProvider.Service(fileVersionInfo.StorageService);
@@ -702,7 +711,7 @@ namespace Hiarc.Core.Database
             {
                 await session.CloseAsync();
             }
-            _logger.LogDebug($"Deleted File: FileKey='{theFile.Key}'");   
+            _logger.LogDebug($"Deleted File: FileKey='{theFile.Key}'");
         }
 
         public async Task<List<Collection>> GetCollectionsForFile(string key)
@@ -788,7 +797,7 @@ namespace Hiarc.Core.Database
             var result = await session.RunAsync(query);
 
             var retentionPolicyApplications = new List<RetentionPolicyApplication>();
-            await result.ForEachAsync((rp) => 
+            await result.ForEachAsync((rp) =>
             {
                 var retentionPolicy = rp["rp"].As<INode>();
                 var retentionPolicyApplication = rp["rpr"].As<IRelationship>();
@@ -802,7 +811,7 @@ namespace Hiarc.Core.Database
 
         public async Task AddUserToFile(string key, AddUserToFileRequest request)
         {
-            if(!AccessLevel.IsValid(request.AccessLevel))
+            if (!AccessLevel.IsValid(request.AccessLevel))
             {
                 throw new ArgumentException($"'{request.AccessLevel}' is not a valid Access Level (did you use all uppercase?)");
             }
@@ -813,14 +822,14 @@ namespace Hiarc.Core.Database
                             CREATE (g)-[:{request.AccessLevel} {{ createdAt: datetime() }}]->(c)
                             RETURN f";
             _logger.LogDebug($"Executing query: {query}");
-            
+
             await session.RunAsync(query);
             await session.CloseAsync();
         }
 
         public async Task AddGroupToFile(string key, AddGroupToFileRequest request)
         {
-            if(!AccessLevel.IsValid(request.AccessLevel))
+            if (!AccessLevel.IsValid(request.AccessLevel))
             {
                 throw new ArgumentException($"'{request.AccessLevel}' is not a valid Access Level (did you use all uppercase?)");
             }
@@ -867,20 +876,20 @@ namespace Hiarc.Core.Database
 
         public async Task<bool> UserCanAccessFile(string userKey, string fileKey, List<string> accessLevels)
         {
-            var results = await UserCanAccessFiles(userKey, new List<string>{fileKey}, accessLevels);
+            var results = await UserCanAccessFiles(userKey, new List<string> { fileKey }, accessLevels);
             return results.Count > 0;
         }
 
         public async Task<List<string>> UserCanAccessFiles(string userKey, List<string> fileKeys, List<string> accessLevels)
         {
-            foreach(string accessLevel in accessLevels)
+            foreach (string accessLevel in accessLevels)
             {
-                if(!AccessLevel.IsValid(accessLevel))
+                if (!AccessLevel.IsValid(accessLevel))
                 {
                     throw new ArgumentException($"'{accessLevel}' is not a valid Access Level (did you use all uppercase?)");
                 }
             }
-            
+
             var quotedFiles = fileKeys.Select((f) => $"'{f}'");
             var fileList = string.Join(',', quotedFiles);
             var accessList = string.Join('|', accessLevels);
@@ -977,7 +986,7 @@ namespace Hiarc.Core.Database
             var result = await session.RunAsync(query);
             var record = await result.SingleAsync();
             await session.CloseAsync();
-            
+
             var collection = record["c"].As<INode>();
             var createdByKey = record["u"].As<INode>()["key"].As<string>();
             var newCollection = CollectionFromNode(collection, createdByKey);
@@ -1099,7 +1108,7 @@ namespace Hiarc.Core.Database
             var files = await this.GetFilesForCollection(key);
             var children = await this.GetChildCollectionsForCollection(key);
 
-            var result = new CollectionItems { ChildCollections=children, Files=files };
+            var result = new CollectionItems { ChildCollections = children, Files = files };
             return result;
         }
 
@@ -1132,7 +1141,7 @@ namespace Hiarc.Core.Database
             {
                 throw new Exception($"Attempt to add collection '{childKey}' as child of collection '{parentKey}' is invalid as it would create a cycle.");
             }
-            
+
             // No cycle found so add the child
             session = _neo4j.AsyncSession();
             var query = $@" MATCH (up:{LABEL_USER})<-[:{RELATIONSHIP_CREATED_BY}]-(parent:{LABEL_COLLECTION} {{key: '{parentKey}'}})
@@ -1144,7 +1153,7 @@ namespace Hiarc.Core.Database
             result = await session.RunAsync(query);
             record = await result.SingleAsync();
             await session.CloseAsync();
-            
+
             var parent = record["parent"].As<INode>();
             var parentCreatedByKey = record["up"].As<INode>()["key"].As<string>();
             var parentCollection = CollectionFromNode(parent, parentCreatedByKey);
@@ -1158,7 +1167,7 @@ namespace Hiarc.Core.Database
 
         public async Task AddUserToCollection(string key, AddUserToCollectionRequest request)
         {
-            if(!AccessLevel.IsValid(request.AccessLevel))
+            if (!AccessLevel.IsValid(request.AccessLevel))
             {
                 throw new ArgumentException($"'{request.AccessLevel}' is not a valid Access Level (did you use all uppercase?)");
             }
@@ -1187,7 +1196,7 @@ namespace Hiarc.Core.Database
 
         public async Task AddGroupToCollection(string key, AddGroupToCollectionRequest request)
         {
-            if(!AccessLevel.IsValid(request.AccessLevel))
+            if (!AccessLevel.IsValid(request.AccessLevel))
             {
                 throw new ArgumentException($"'{request.AccessLevel}' is not a valid Access Level (did you use all uppercase?)");
             }
@@ -1239,20 +1248,20 @@ namespace Hiarc.Core.Database
 
         public async Task<bool> UserCanAccessCollection(string userKey, string collectionKey, List<string> accessLevels)
         {
-            var results = await UserCanAccessCollections(userKey, new List<string>{collectionKey}, accessLevels);
+            var results = await UserCanAccessCollections(userKey, new List<string> { collectionKey }, accessLevels);
             return results.Count > 0;
         }
 
         public async Task<List<string>> UserCanAccessCollections(string userKey, List<string> collectionKeys, List<string> accessLevels)
         {
-            foreach(string accessLevel in accessLevels)
+            foreach (string accessLevel in accessLevels)
             {
-                if(!AccessLevel.IsValid(accessLevel))
+                if (!AccessLevel.IsValid(accessLevel))
                 {
                     throw new ArgumentException($"'{accessLevel}' is not a valid Access Level (did you use all uppercase?)");
                 }
             }
-            
+
             var quotedCollections = collectionKeys.Select((c) => $"'{c}'");
             var collectionList = string.Join(',', quotedCollections);
             var accessList = string.Join('|', accessLevels);
@@ -1567,7 +1576,8 @@ namespace Hiarc.Core.Database
             var appliedAt = rel["appliedAt"].As<DateTimeOffset>();
             var expiresAt = appliedAt.AddSeconds(rp.Seconds);
 
-            var rpa = new RetentionPolicyApplication {
+            var rpa = new RetentionPolicyApplication
+            {
                 RetentionPolicy = rp,
                 AppliedAt = appliedAt,
                 ExpiresAt = expiresAt
@@ -1583,7 +1593,7 @@ namespace Hiarc.Core.Database
             return c;
         }
 
-        private IList<string> BuildEntityQueryParts<T>(T request, bool isUpdate) where T:CreateOrUpdateEntityRequest
+        private IList<string> BuildEntityQueryParts<T>(T request, bool isUpdate) where T : CreateOrUpdateEntityRequest
         {
             var propertyQueryParts = new List<string>();
 
@@ -1600,9 +1610,9 @@ namespace Hiarc.Core.Database
                 else
                 {
                     propertyQueryParts.Add($"key: '{request.Key}'");
-                }         
+                }
             }
-            
+
             if (request.Name != null)
             {
                 if (string.IsNullOrWhiteSpace(request.Name))
@@ -1612,7 +1622,7 @@ namespace Hiarc.Core.Database
                 else
                 {
                     propertyQueryParts.Add($"name: '{request.Name}'");
-                }      
+                }
             }
 
             if (request.Description != null)
@@ -1624,14 +1634,14 @@ namespace Hiarc.Core.Database
                 else
                 {
                     propertyQueryParts.Add($"description: '{request.Description}'");
-                } 
+                }
             }
 
             if (!isUpdate)
             {
                 propertyQueryParts.Add("createdAt: datetime()");
             }
-            
+
             propertyQueryParts.Add("modifiedAt: datetime()");
 
             if (request.Metadata != null)
@@ -1639,10 +1649,10 @@ namespace Hiarc.Core.Database
                 ProcessMetadata(request.Metadata, propertyQueryParts);
             }
 
-            return propertyQueryParts;   
+            return propertyQueryParts;
         }
 
-        private void ExtractEntityProperties<T>(T entity, INode node, string createdByKey=null) where T:Entity
+        private void ExtractEntityProperties<T>(T entity, INode node, string createdByKey = null) where T : Entity
         {
             entity.CreatedBy = createdByKey;
             var metadata = new Dictionary<string, object>();
@@ -1676,7 +1686,7 @@ namespace Hiarc.Core.Database
                                 var theDateUtc = prop.Value.As<DateTimeOffset>().UtcDateTime;
                                 metadata.Add(keyName, theDateUtc);
                             }
-                            catch(InvalidCastException)
+                            catch (InvalidCastException)
                             {
                                 metadata.Add(keyName, prop.Value);
                             }
@@ -1688,9 +1698,9 @@ namespace Hiarc.Core.Database
             if (metadata.Count > 0) entity.Metadata = metadata;
         }
 
-        private void ProcessMetadata(Dictionary<string,object> metadata, List<string> queryParts)
+        private void ProcessMetadata(Dictionary<string, object> metadata, List<string> queryParts)
         {
-            foreach(var item in metadata)
+            foreach (var item in metadata)
             {
                 var value = item.Value;
                 if (value == null)
@@ -1700,7 +1710,7 @@ namespace Hiarc.Core.Database
                 else
                 {
                     JsonElement element = (JsonElement)value;
-                    if(element.ValueKind == JsonValueKind.String)
+                    if (element.ValueKind == JsonValueKind.String)
                     {
                         if (element.TryGetDateTime(out var specifiedDateTime))
                         {
@@ -1711,24 +1721,24 @@ namespace Hiarc.Core.Database
                         else
                         {
                             queryParts.Add($"{METADATA_PREFIX}{item.Key}: '{element}'");
-                        }        
+                        }
                     }
-                    else if (element.ValueKind == JsonValueKind.True || 
+                    else if (element.ValueKind == JsonValueKind.True ||
                              element.ValueKind == JsonValueKind.False ||
                              element.ValueKind == JsonValueKind.Number)
                     {
                         queryParts.Add($"{METADATA_PREFIX}{item.Key}: {element}");
                     }
-                }      
+                }
             }
         }
 
-        private string BuildWhereClause(List<Dictionary<string,object>> items, string nodeName)
+        private string BuildWhereClause(List<Dictionary<string, object>> items, string nodeName)
         {
             var whereClauseItems = new List<string>();
 
             foreach (var item in items)
-            {    
+            {
                 var itemsIgnoreCase = new Dictionary<string, object>(item, CASE_INSENSITIVE_COMPARER);
 
                 string op, queryText = null;
@@ -1752,7 +1762,7 @@ namespace Hiarc.Core.Database
                     {
                         throw new ArgumentException($"The specified boolean operator '{op}' is not valid");
                     }
-                    
+
                     var valueElement = (JsonElement)itemsIgnoreCase["VALUE"];
                     var val = valueElement.ValueKind == JsonValueKind.String ? $"'{valueElement}'" : valueElement.ToString();
                     queryText = $"{nodeName}.{prop} {op.ToUpper()} {val}";
@@ -1787,39 +1797,39 @@ namespace Hiarc.Core.Database
             var whereClause = string.Join(" ", whereClauseItems);
             return whereClause;
 
-             /*
-                {
-                    "query": [
-                        {
-                            "prop": "department",
-                            "op": "starts with",
-                            "value": "sal"
-                        },
-                        {
-                            "bool": "and"
-                        },
-                        {
-                            "parens": "("
-                        },
-                        {
-                            "prop": "targetRate",
-                            "op": ">=",
-                            "value": 4.22
-                        },
-                        {
-                            "bool": "and"
-                        },
-                        {
-                            "prop": "quotaCarrying",
-                            "op": "=",
-                            "value": true
-                        },
-                        {
-                            "parens": ")"
-                        }
-                    ]
-                }
-            */  
+            /*
+               {
+                   "query": [
+                       {
+                           "prop": "department",
+                           "op": "starts with",
+                           "value": "sal"
+                       },
+                       {
+                           "bool": "and"
+                       },
+                       {
+                           "parens": "("
+                       },
+                       {
+                           "prop": "targetRate",
+                           "op": ">=",
+                           "value": 4.22
+                       },
+                       {
+                           "bool": "and"
+                       },
+                       {
+                           "prop": "quotaCarrying",
+                           "op": "=",
+                           "value": true
+                       },
+                       {
+                           "parens": ")"
+                       }
+                   ]
+               }
+           */
         }
     }
 }

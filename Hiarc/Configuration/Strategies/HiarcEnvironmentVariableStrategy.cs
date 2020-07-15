@@ -15,8 +15,16 @@ namespace Hiarc.Configuration.Strategies
         public void GetHiarcConfiguration(Action<string, string> set)
         {
             var settingsBlob = Environment.GetEnvironmentVariable(HIARC);
-            var hiarc = System.Text.UTF8Encoding.UTF8.GetString(Convert.FromBase64String(settingsBlob));
-            var settings = JsonSerializer.Deserialize<HiarcSettingsModel>(hiarc, new JsonSerializerOptions
+            string convertedSettings;
+            try
+            {
+                convertedSettings = System.Text.UTF8Encoding.UTF8.GetString(Convert.FromBase64String(settingsBlob));
+            }
+            catch (FormatException)
+            {
+                convertedSettings = settingsBlob;
+            }
+            var settings = JsonSerializer.Deserialize<HiarcSettingsModel>(convertedSettings, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             });

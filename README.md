@@ -86,7 +86,8 @@ Copy the string in `appsettings.txt` and replace `HIARC_SETTINGS=<base64 encoded
     "Database": {
         "Uri": "<uri-for-neo4j>",
         "Username": "<neo4j-username>",
-        "Password": "<neo4j-password>"
+        "Password": "<neo4j-password>",
+        "UseEncryptedConnection": true
     },
     "EventServices": [
         {

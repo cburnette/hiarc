@@ -20,5 +20,6 @@ namespace Hiarc.Core.Settings
         public string Uri { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public bool UseEncryptedConnection { get; set; }
     }
 }

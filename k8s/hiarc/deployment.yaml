@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hiarc
+  labels:
+    app: hiarc
+  namespace: hiarc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hiarc
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: hiarc
+    spec:
+      containers:
+      - image: amsxbg/hiarc:latest
+        imagePullPolicy: Always
+        name: hiarc
+        env:
+        - name: HIARC_SETTINGS
+          valueFrom:
+            secretKeyRef:
+              name: hiarc-config
+              key: hiarcSettings
+        - name: HIARC_CONFIG_STRATEGY
+          value: "env"
+        ports:
+        - containerPort: 80
+          protocol: TCP
