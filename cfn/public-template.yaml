@@ -1,0 +1,465 @@
+Resources:
+  HiarcVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC
+  HiarcVPCPublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/18
+      VpcId:
+        Ref: HiarcVPC
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: hiarc:subnet-name
+          Value: Public
+        - Key: hiarc:subnet-type
+          Value: Public
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet1
+  HiarcVPCPublicSubnet1RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: HiarcVPC
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet1
+  HiarcVPCPublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPublicSubnet1RouteTable
+      SubnetId:
+        Ref: HiarcVPCPublicSubnet1
+  HiarcVPCPublicSubnet1DefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPublicSubnet1RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: HiarcVPCIGW
+    DependsOn:
+      - HiarcVPCGWA
+  HiarcVPCPublicSubnet1EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet1
+  HiarcVPCPublicSubnet1NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - HiarcVPCPublicSubnet1EIP
+          - AllocationId
+      SubnetId:
+        Ref: HiarcVPCPublicSubnet1
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet1
+  HiarcVPCPublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.64.0/18
+      VpcId:
+        Ref: HiarcVPC
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: hiarc:subnet-name
+          Value: Public
+        - Key: hiarc:subnet-type
+          Value: Public
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet2
+  HiarcVPCPublicSubnet2RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: HiarcVPC
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet2
+  HiarcVPCPublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPublicSubnet2RouteTable
+      SubnetId:
+        Ref: HiarcVPCPublicSubnet2
+  HiarcVPCPublicSubnet2DefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPublicSubnet2RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: HiarcVPCIGW
+    DependsOn:
+      - HiarcVPCGWA
+  HiarcVPCPublicSubnet2EIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet2
+  HiarcVPCPublicSubnet2NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - HiarcVPCPublicSubnet2EIP
+          - AllocationId
+      SubnetId:
+        Ref: HiarcVPCPublicSubnet2
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PublicSubnet2
+  HiarcVPCPrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.128.0/18
+      VpcId:
+        Ref: HiarcVPC
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: hiarc:subnet-name
+          Value: Private
+        - Key: hiarc:subnet-type
+          Value: Private
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PrivateSubnet1
+  HiarcVPCPrivateSubnet1RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: HiarcVPC
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PrivateSubnet1
+  HiarcVPCPrivateSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPrivateSubnet1RouteTable
+      SubnetId:
+        Ref: HiarcVPCPrivateSubnet1
+  HiarcVPCPrivateSubnet1DefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPrivateSubnet1RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: HiarcVPCPublicSubnet1NATGateway
+  HiarcVPCPrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.192.0/18
+      VpcId:
+        Ref: HiarcVPC
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: hiarc:subnet-name
+          Value: Private
+        - Key: hiarc:subnet-type
+          Value: Private
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PrivateSubnet2
+  HiarcVPCPrivateSubnet2RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: HiarcVPC
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC/PrivateSubnet2
+  HiarcVPCPrivateSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPrivateSubnet2RouteTable
+      SubnetId:
+        Ref: HiarcVPCPrivateSubnet2
+  HiarcVPCPrivateSubnet2Route:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: HiarcVPCPrivateSubnet2RouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: HiarcVPCPublicSubnet2NATGateway
+  HiarcVPCIGW:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Hiarc/HiarcVPC
+  HiarcVPCGWA:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: HiarcVPC
+      InternetGatewayId:
+        Ref: HiarcVPCIGW
+  HiarcCluster:
+    Type: AWS::ECS::Cluster
+  HiarcLB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      SecurityGroups:
+        - Fn::GetAtt:
+            - HiarcLBSecurityGroup
+            - GroupId
+      Subnets:
+        - Ref: HiarcVPCPublicSubnet1
+        - Ref: HiarcVPCPublicSubnet2
+      Type: application
+    DependsOn:
+      - HiarcVPCPublicSubnet1DefaultRoute
+      - HiarcVPCPublicSubnet2DefaultRoute
+  HiarcLBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Automatically created Security Group for HiarcLB
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow from anyone on port 80
+          FromPort: 80
+          IpProtocol: tcp
+          ToPort: 80
+      VpcId:
+        Ref: HiarcVPC
+  HiarcLBSecurityGroupEgress:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId:
+        Fn::GetAtt:
+          - HiarcLBSecurityGroup
+          - GroupId
+      IpProtocol: tcp
+      Description: Load balancer to target
+      DestinationSecurityGroupId:
+        Fn::GetAtt:
+          - HiarcServiceSecurityGroup
+          - GroupId
+      FromPort: 80
+      ToPort: 80
+  HiarcLBPublicListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - TargetGroupArn:
+            Ref: HiarcLBPublicListenerECSGroup
+          Type: forward
+      LoadBalancerArn:
+        Ref: HiarcLB
+      Port: 80
+      Protocol: HTTP
+  HiarcLBPublicListenerECSGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Port: 80
+      Protocol: HTTP
+      TargetType: ip
+      VpcId:
+        Ref: HiarcVPC
+  HiarcTaskDefinitionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+  HiarcTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Essential: true
+          Image: 
+            Fn::Join:
+              - ":"
+              - - 'hiarcdb/hiarcdb'
+                - !Ref HiarcVersion
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: HiarcTaskDefinitionLogGroup
+              awslogs-stream-prefix: hiarc
+              awslogs-region:
+                Ref: AWS::Region
+          Name: web
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: tcp
+          Environment:
+            - Name: HIARC_CONFIG_STRATEGY
+              Value: env
+          Secrets:
+            - Name: HIARC_SETTINGS
+              ValueFrom: !Sub
+              - 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretName}'
+              - { SecretName: !Ref "HiarcSettingsSecretName" }
+      Cpu: "512"
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - HiarcTaskDefinitionExecutionRole
+          - Arn
+      Family: hiarc
+      Memory: "2048"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::GetAtt:
+          - HiarcTaskDefinitionRole
+          - Arn
+  HiarcTaskDefinitionLogGroup:
+    Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  HiarcTaskDefinitionExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: "2012-10-17"
+  HiarcTaskDefinitionExecutionRolePolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - HiarcTaskDefinitionLogGroup
+                - Arn
+          - Action:
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+            Effect: Allow
+            Resource: !Sub
+            - 'arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${SecretName}'
+            - { SecretName: !Ref "HiarcSettingsSecretName" }
+        Version: "2012-10-17"
+      PolicyName: HiarcTaskDefinitionExecutionRolePolicy
+      Roles:
+        - Ref: HiarcTaskDefinitionExecutionRole
+  HiarcService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Ref: HiarcCluster
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      DesiredCount: 3
+      EnableECSManagedTags: false
+      HealthCheckGracePeriodSeconds: 60
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: web
+          ContainerPort: 80
+          TargetGroupArn:
+            Ref: HiarcLBPublicListenerECSGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - Fn::GetAtt:
+                - HiarcServiceSecurityGroup
+                - GroupId
+          Subnets:
+            - Ref: HiarcVPCPrivateSubnet1
+            - Ref: HiarcVPCPrivateSubnet2
+      TaskDefinition:
+        Ref: HiarcTaskDefinition
+    DependsOn:
+      - HiarcLBPublicListenerECSGroup
+      - HiarcLBPublicListener
+  HiarcServiceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Hiarc/HiarcService/Service/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId:
+        Ref: HiarcVPC
+  HiarcServiceSecurityGroupIngressFromLB:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      IpProtocol: tcp
+      Description: Load balancer to target
+      FromPort: 80
+      GroupId:
+        Fn::GetAtt:
+          - HiarcServiceSecurityGroup
+          - GroupId
+      SourceSecurityGroupId:
+        Fn::GetAtt:
+          - HiarcLBSecurityGroup
+          - GroupId
+      ToPort: 80
+Parameters:
+  HiarcSettingsSecretName:
+    Type: String
+    Description: AWS Secrets Manager secret name that is storing base64-encoded, JSON formatted Hiarc settings
+    AllowedPattern: .+
+  HiarcVersion:
+    Type: String
+    Description: Image version to use for Hiarc Docker image.
+    Default: latest
+Outputs:
+  HiarcLBOutput:
+    Value:
+      Fn::GetAtt:
+        - HiarcLB
+        - DNSName
+  HiarcURL:
+    Value:
+      Fn::Join:
+        - ""
+        - - http://
+          - Fn::GetAtt:
+              - HiarcLB
+              - DNSName
