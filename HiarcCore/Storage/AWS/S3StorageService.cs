@@ -20,16 +20,22 @@ namespace Hiarc.Core.Storage.AWS
 
         public string Type { get; }
         public string Name { get; }
-        public bool SupportsDirectDownload { get; }
-        public bool SupportsDirectUpload { get; }
 
-        public S3StorageService(string name, IOptions<S3Settings> s3Settings, ILogger<StorageServiceProvider> logger)
+        public bool SupportsDirectDownload { get; }
+        public bool AllowDirectDownload { get; set; }
+        
+        public bool SupportsDirectUpload { get; }
+        public bool AllowDirectUpload { get; set; } 
+
+        public S3StorageService(string name, IOptions<S3Settings> s3Settings, bool allowDirectDownload, bool allowDirectUpload, ILogger<StorageServiceProvider> logger)
         {
             Type = StorageServiceProvider.AWS_S3;
             Name = name;
             S3Settings = s3Settings.Value;
             SupportsDirectDownload = true;
+            AllowDirectDownload = allowDirectDownload;
             SupportsDirectUpload = true;
+            AllowDirectUpload = allowDirectUpload;
             _logger = logger;
             _region = RegionEndpoint.GetBySystemName(S3Settings.RegionSystemName);
         }

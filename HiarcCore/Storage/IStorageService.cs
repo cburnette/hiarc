@@ -9,8 +9,13 @@ namespace Hiarc.Core.Storage
 
         string Type { get; }
         string Name { get; }
+        
         bool SupportsDirectDownload { get; }
+        bool AllowDirectDownload { get; set; }
+        
         bool SupportsDirectUpload { get; }
+        bool AllowDirectUpload { get; set; } 
+        
         Task<IFileInformation> StoreFile(Stream fileStream);
         Task<Stream> RetrieveFile(string identifier);
         Task<string> GetDirectDownloadUrl(string identifier, int expiresInSeconds);

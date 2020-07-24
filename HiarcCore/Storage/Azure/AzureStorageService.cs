@@ -19,15 +19,21 @@ namespace Hiarc.Core.Storage.Azure
 
         public string Type { get; }
         public string Name { get; }
+        
         public bool SupportsDirectDownload { get; }
+        public bool AllowDirectDownload { get; set; }
+        
         public bool SupportsDirectUpload { get; }
+        public bool AllowDirectUpload { get; set; }
 
-        public AzureStorageService(string name, IOptions<AzureSettings> azureSettings, ILogger<StorageServiceProvider> logger)
+        public AzureStorageService(string name, IOptions<AzureSettings> azureSettings, bool allowDirectDownload, bool allowDirectUpload, ILogger<StorageServiceProvider> logger)
         {
             Type = StorageServiceProvider.AZURE_BLOB_STORAGE;
             Name = name;
-            SupportsDirectDownload = false;
-            SupportsDirectUpload = false;
+            SupportsDirectDownload = true;
+            AllowDirectDownload = allowDirectDownload;
+            SupportsDirectUpload = true;
+            AllowDirectUpload = allowDirectUpload;
             _azureSettings = azureSettings.Value;
             _logger = logger;
             _storageAccount = CloudStorageAccount.Parse(_azureSettings.StorageConnectionString);

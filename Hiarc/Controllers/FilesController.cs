@@ -358,7 +358,7 @@ namespace Hiarc.Api.REST.Controllers
                     var latestFileVersion = await _hiarcDatabase.GetLatestVersionForFile(fileKey);
                     var storageService = _storageServiceProvider.Service(latestFileVersion.StorageService);
 
-                    if (storageService.SupportsDirectDownload)
+                    if (storageService.SupportsDirectDownload && storageService.AllowDirectDownload)
                     {
                         var directDownloadUrl = await storageService.GetDirectDownloadUrl(latestFileVersion.StorageId, IStorageService.DEFAULT_EXPIRES_IN_SECONDS);
                         return new RedirectResult(directDownloadUrl, false); 
@@ -387,8 +387,9 @@ namespace Hiarc.Api.REST.Controllers
             try
             {
                 var expiresIn = expiresInSeconds ?? IStorageService.DEFAULT_EXPIRES_IN_SECONDS;
+                var storageService = _storageServiceProvider.Service(request.StorageService);
 
-                if (_storageServiceProvider.Service(request.StorageService).SupportsDirectUpload)
+                if (storageService.SupportsDirectUpload && storageService.AllowDirectUpload)
                 {
                     var storageId = Guid.NewGuid().ToString();
                     var directUploadUrl = await _storageServiceProvider.Service(request.StorageService).GetDirectUploadUrl(storageId, expiresIn);
@@ -422,8 +423,9 @@ namespace Hiarc.Api.REST.Controllers
                 {
                     var expiresIn = expiresInSeconds ?? IStorageService.DEFAULT_EXPIRES_IN_SECONDS;
                     var latestFileVersion = await _hiarcDatabase.GetLatestVersionForFile(fileKey);
+                    var storageService = _storageServiceProvider.Service(latestFileVersion.StorageService);
 
-                    if (_storageServiceProvider.Service(latestFileVersion.StorageService).SupportsDirectDownload)
+                    if (storageService.SupportsDirectDownload && storageService.AllowDirectDownload)
                     {
                         var directDownloadUrl = await _storageServiceProvider.Service(latestFileVersion.StorageService).GetDirectDownloadUrl(latestFileVersion.StorageId, expiresInSeconds: expiresIn);
                         var expiresAt = DateTime.UtcNow.AddSeconds(expiresIn);
