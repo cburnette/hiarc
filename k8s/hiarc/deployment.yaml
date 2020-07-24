@@ -21,7 +21,7 @@ spec:
         app: hiarc
     spec:
       containers:
-      - image: amsxbg/hiarc:latest
+      - image: hiarcdb/hiarcdb:latest
         imagePullPolicy: Always
         name: hiarc
         env:
