@@ -2,6 +2,7 @@
 **/bin/
 **/obj/
 **/out/
+Hiarc/appsettings.example.json
 
 # files
 Dockerfile*

@@ -1,0 +1,9 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hiarc
+  namespace: hiarc
+spec:
+  backend:
+    serviceName: hiarc
+    servicePort: 80
