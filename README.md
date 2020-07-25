@@ -87,6 +87,39 @@ Copy the string in `appsettings.txt` and replace `HIARC_SETTINGS=<base64 encoded
         "Username": "<neo4j-username>",
         "Password": "<neo4j-password>"
     },
+    "StorageServices": [
+        {
+            "Provider": "AWS-S3",
+            "Name": "<name>",
+            "IsDefault": true,
+            "AllowDirectDownload": true,
+            "AllowDirectUpload": true,
+            "Config": {
+                "AccessKeyId": "<key>",
+                "SecretAccessKey": "<secret>",
+                "RegionSystemName": "<region-name>",
+                "Bucket": "<bucket-name>"
+            }
+        },
+        {
+            "Provider": "Azure-Blob",
+            "Name": "<name>",
+            "IsDefault": false,
+            "Config": {
+                "StorageConnectionString": "<connection string>",
+                "Container": "container-name"
+            }
+        },
+        {
+            "Provider": "Google-Storage",
+            "Name": "<name>",
+            "IsDefault": false,
+            "Config": {
+                "ServiceAccountCredential": "<credentials>",
+                "Bucket": "<bucket-name>"
+            }
+        }
+    ]
     "EventServices": [
         {
             "Provider": "Webhook",
@@ -125,37 +158,6 @@ Copy the string in `appsettings.txt` and replace `HIARC_SETTINGS=<base64 encoded
                 "ServiceAccountCredential": "<creds>",
                 "ProjectId": "<project-id>",
                 "Topic": "<topic>"
-            }
-        }
-    ],
-    "StorageServices": [
-        {
-            "Provider": "AWS-S3",
-            "Name": "<name>",
-            "IsDefault": true,
-            "Config": {
-                "AccessKeyId": "<key>",
-                "SecretAccessKey": "<secret>",
-                "RegionSystemName": "<region-name>",
-                "Bucket": "<bucket-name>"
-            }
-        },
-        {
-            "Provider": "Azure-Blob",
-            "Name": "<name>",
-            "IsDefault": false,
-            "Config": {
-                "StorageConnectionString": "<connection string>",
-                "Container": "container-name"
-            }
-        },
-        {
-            "Provider": "Google-Storage",
-            "Name": "<name>",
-            "IsDefault": false,
-            "Config": {
-                "ServiceAccountCredential": "<credentials>",
-                "Bucket": "<bucket-name>"
             }
         }
     ]
