@@ -19,10 +19,8 @@ namespace Hiarc.Core.Events.Webhook
         private readonly string _name;
         private readonly WebhookSettings _webhookSettings;
         private readonly ILogger<HiarcEventServiceProvider> _logger;
-        
-        private static IHttpClientFactory clientFactory;
-
-        private static readonly string HIARC_SIGNATURE = "X-HIARC-SIGNATURE";
+        private readonly IHttpClientFactory clientFactory;
+        private const string HIARC_WEBHOOK_SIGNATURE_HEADER_NAME = "X-HIARC-SIGNATURE";
 
         public WebhookEventService(string name, IOptions<WebhookSettings> webhookSettings, ILogger<HiarcEventServiceProvider> logger)
         {
@@ -52,7 +50,7 @@ namespace Hiarc.Core.Events.Webhook
 
                 if (!string.IsNullOrWhiteSpace(_webhookSettings.Secret))
                 {
-                    // TODO: https://stripe.com/docs/webhooks/signatures
+                    // https://stripe.com/docs/webhooks/signatures
                     var unixNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     var payload = $"{unixNow}.{serializedEvent}";
 
@@ -65,7 +63,7 @@ namespace Hiarc.Core.Events.Webhook
                     var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
                     var signature = $"t={unixNow},v1={hashString}";
 
-                    httpContent.Headers.Add(HIARC_SIGNATURE, signature);
+                    httpContent.Headers.Add(HIARC_WEBHOOK_SIGNATURE_HEADER_NAME, signature);
                 }
                 
                 var response = await WebhookClient.PostAsync(_webhookSettings.URL, httpContent);  
@@ -91,7 +89,6 @@ namespace Hiarc.Core.Events.Webhook
             get
             {
                 var client = clientFactory.CreateClient();
-                client.Timeout = TimeSpan.FromSeconds(30);
                 return client;
             }
         }

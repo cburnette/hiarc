@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using Hiarc.Core.Events.AWS;
 using Hiarc.Core.Events.Azure;
 using Hiarc.Core.Settings;
@@ -15,6 +14,8 @@ using Hiarc.Core.Events.Google;
 using Hiarc.Core.Models;
 using Hiarc.Core.Settings.Events.Webhook;
 using Hiarc.Core.Events.Webhook;
+using Hiarc.Core.Settings.Events.WorkOS;
+using Hiarc.Core.Events.WorkOS;
 
 namespace Hiarc.Core.Events
 {
@@ -25,6 +26,7 @@ namespace Hiarc.Core.Events
         public const string AZURE_SERVICE_BUS = "Azure-ServiceBus";
         public const string GOOGLE_PUBSUB = "Google-PubSub";
         public const string WEBHOOK = "Webhook";
+        public const string WORKOS = "WorkOS";
 
         public const string EVENT_USER_CREATED = "userCreated";
         public const string EVENT_USER_UPDATED = "userUpdated";
@@ -222,6 +224,17 @@ namespace Hiarc.Core.Events
 
                     IEventService webhookService = new WebhookEventService(es.Name, webhookSettings, _logger);
                     _eventServices.Add(webhookService);
+                }
+                else if (es.Provider == WORKOS)
+                {
+                    var settings = new WorkOSSettings
+                    {
+                        SecretKey = ((dynamic)es.Config).SecretKey
+                    };
+                    IOptions<WorkOSSettings> workOSSettings = Options.Create(settings);
+
+                    IEventService workOSService = new WorkOSEventService(es.Name, workOSSettings, _logger);
+                    _eventServices.Add(workOSService);
                 }
                 else
                 {

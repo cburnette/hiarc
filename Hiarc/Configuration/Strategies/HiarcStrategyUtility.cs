@@ -10,6 +10,7 @@ using Hiarc.Core.Settings.Events.AWS;
 using Hiarc.Core.Settings.Events.Azure;
 using Hiarc.Core.Settings.Events.Google;
 using Hiarc.Core.Settings.Events.Webhook;
+using Hiarc.Core.Settings.Events.WorkOS;
 using Hiarc.Core.Settings.Storage;
 using Hiarc.Core.Settings.Storage.AWS;
 using Hiarc.Core.Settings.Storage.Azure;
@@ -180,6 +181,13 @@ namespace Hiarc.Configuration.Strategies
                 {
                     URL = ((dynamic)es.Config).URL.ToString(),
                     Secret = ((dynamic)es.Config).Secret.ToString()
+                }, set, i);
+            }
+            else if (es.Provider == HiarcEventServiceProvider.WORKOS)
+            {
+                Load<WorkOSSettings>(new WorkOSSettings
+                {
+                    SecretKey = ((dynamic)es.Config).SecretKey.ToString()
                 }, set, i);
             }
             else
