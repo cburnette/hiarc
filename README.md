@@ -3,7 +3,7 @@
 > :warning: Hiarc is currently pre-release software. If you are interested in trying it out please email <try@hiarcdb.com>
 > and we'll be happy to help you get it up and running.
 
-**Hiarc is an API that adds enterprise features to simple cloud storage.** You can run it yourself and orchestrate all of your enterprise content requirements across cloud environments. Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to come).  By leveraging the cloud infrastructure you already use, Hiarc leaves critical data under your control.  Every file and every event resides in your infrastructure, with Hiarc providing the connective tissue around permissions, organization, access, and scale.
+**Hiarc is an API that adds enterprise content features to simple cloud storage.** You can run it yourself and orchestrate all of your enterprise content requirements across cloud environments. Whether it's AWS, Azure, or Google, Hiarc supports it (with more platforms to come).  By leveraging the cloud infrastructure you already use, Hiarc leaves critical data under your control.  Every file and every event resides in your infrastructure, with Hiarc providing the connective tissue around permissions, organization, access, and scale.
 
 Hiarc leverages a powerful graph database to scale up to billions of files and hundreds of millions of users with <100ms response times. By sitting between your application code and your cloud infrastructure, Hiarc acts as an organizational and control layer, providing key pieces of functionality required in complex enterprise workflows.
 
