@@ -30,9 +30,9 @@ namespace Hiarc.Core.Storage.Azure
         {
             Type = StorageServiceProvider.AZURE_BLOB_STORAGE;
             Name = name;
-            SupportsDirectDownload = true;
+            SupportsDirectDownload = false;
             AllowDirectDownload = allowDirectDownload;
-            SupportsDirectUpload = true;
+            SupportsDirectUpload = false;
             AllowDirectUpload = allowDirectUpload;
             _azureSettings = azureSettings.Value;
             _logger = logger;

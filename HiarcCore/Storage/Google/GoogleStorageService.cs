@@ -31,9 +31,9 @@ namespace Hiarc.Core.Storage.Google
             Type = StorageServiceProvider.GOOGLE_STORAGE;
             Name = name;
             GoogleSettings = googleSettings.Value;
-            SupportsDirectDownload = true;
+            SupportsDirectDownload = false;
             AllowDirectDownload = allowDirectDownload;
-            SupportsDirectUpload = true;
+            SupportsDirectUpload = false;
             AllowDirectUpload = allowDirectUpload;
             _logger = logger;
 
