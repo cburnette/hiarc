@@ -662,8 +662,7 @@ namespace Hiarc.Core.Database
                 throw new InvalidOperationException($"Attempted to delete file with active retention policy: FileKey='{theFile.Key}'");
             }
 
-            var allFileVersions = await this.GetFileVersions(key);
-            
+            var allFileVersions = await this.GetFileVersions(key);           
             
             foreach (var fileVersionInfo in allFileVersions)
             {
