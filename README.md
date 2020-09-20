@@ -57,6 +57,7 @@ Hiarc leverages a powerful graph database to scale up to billions of files and h
 
 * **Classifications** - To make things even easier, Hiarc provides classifications which can be applied to files or collections.  A classification can specify retention policies that should be applied to a specific file, or to any file that ever becomes a member of a designated collection.  Even if the file is later removed from the collection the classification remains.  Classifications can be explicitly removed, but any retention policies applied will remain.
 
+## Sounds Awesome! How do I get this thing running?
 ### Settings
 
 Use the following environment variables to configure Hiarc:
