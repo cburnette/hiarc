@@ -123,6 +123,41 @@ namespace HiarcIntegrationTest.Tests
         }
 
         [Fact]
+        public async void GetAllowedFiles()
+        {
+            var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
+            var f2 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
+            var f3 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
+            var f4 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
+            var u1 = await _hiarc.CreateUser();
+
+            await _hiarc.AddUserToFile(u1.Key, f1.Key, AccessLevel.READ_ONLY);
+
+            var c1 = await _hiarc.CreateCollection();
+            await _hiarc.AddFileToCollection(c1.Key, f2.Key);
+            await _hiarc.AddUserToCollection(c1.Key, u1.Key, accessLevel: AccessLevel.READ_ONLY);
+
+            var c2 = await _hiarc.CreateCollection();
+            var c3 = await _hiarc.CreateCollection();
+            await _hiarc.AddChildCollection(c2.Key, c3.Key);
+            await _hiarc.AddFileToCollection(c3.Key, f3.Key);
+            await _hiarc.AddUserToCollection(c2.Key, u1.Key, accessLevel: AccessLevel.READ_ONLY);
+
+            var requestedFiles = new List<string> {f1.Key, f2.Key, f3.Key, f4.Key};
+            var allowedFiles = await _hiarc.FilterAllowedFiles(requestedFiles, asUserKey: u1.Key);
+
+            Assert.Contains(f1.Key, allowedFiles);
+            Assert.Contains(f2.Key, allowedFiles);
+            Assert.Contains(f3.Key, allowedFiles);
+            Assert.DoesNotContain(f4.Key, allowedFiles);
+
+            await _hiarc.DeleteFile(f1.Key);
+            await _hiarc.DeleteFile(f2.Key);
+            await _hiarc.DeleteFile(f3.Key);
+            await _hiarc.DeleteFile(f4.Key);
+        }
+
+        [Fact]
         public async void DownloadFile()
         {
             foreach(var ss in All_STORAGE_SERVICES)
@@ -164,7 +199,8 @@ namespace HiarcIntegrationTest.Tests
         [Fact]
         public async void DirectUploadUrl()
         {
-            await _hiarc.CreateFileDirectUpload();
+            var directUploadUrl = await _hiarc.CreateFileDirectUpload();
+            Assert.StartsWith("https",directUploadUrl.DirectUploadUrl);
         }
 
         [Fact]

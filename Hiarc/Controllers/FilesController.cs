@@ -48,7 +48,7 @@ namespace Hiarc.Api.REST.Controllers
             try
             {
                 var userKey = _contextAccessor.UserKeyFromContext();
-                bool userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.ReadOnlyOrHigher);
+                var userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.ReadOnlyOrHigher);
 
                 if (userCanAccessFile)
                 {
@@ -72,7 +72,7 @@ namespace Hiarc.Api.REST.Controllers
             try
             {
                 var userKey = _contextAccessor.UserKeyFromContext();
-                bool userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.ReadOnlyOrHigher);
+                var userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.ReadOnlyOrHigher);
 
                 if (userCanAccessFile)
                 {
@@ -96,7 +96,7 @@ namespace Hiarc.Api.REST.Controllers
             try
             {
                 var userKey = _contextAccessor.UserKeyFromContext();
-                bool userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.CoOwner);
+                var userCanAccessFile = await UserCanAccessFile(userKey, fileKey, _hiarcDatabase, AccessLevelGroup.CoOwner);
 
                 if (userCanAccessFile)
                 {
@@ -112,6 +112,23 @@ namespace Hiarc.Api.REST.Controllers
             {
                 return BuildErrorResponse(ex, _logger);
             }   
+        }
+
+        [Authorize(Policy = Auth.REQUIRES_ADMIN)]
+        [HttpPost("allowed")]
+        public async Task<IActionResult> FilterAllowedFiles([FromBody]AllowedFilesRequest request)
+        {
+            try
+            {
+                var userKey = _contextAccessor.UserKeyFromContext();
+                var allowedFiles = await _hiarcDatabase.UserCanAccessFiles(userKey, request.Keys, AccessLevelGroup.ReadOnlyOrHigher);
+
+                return Ok(allowedFiles);
+            }
+            catch(Exception ex)
+            {
+                return BuildErrorResponse(ex, _logger);
+            }
         }
 
         [DisableRequestSizeLimit]

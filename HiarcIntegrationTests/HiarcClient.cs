@@ -87,6 +87,14 @@ namespace HiarcIntegrationTest
             return retentionPolicies;
         }
 
+        public async Task<List<string>> FilterAllowedFiles(List<string> fileKeys, string asUserKey=null, string bearerToken=null, bool logToConsole=true)
+        {
+            var request = new AllowedFilesRequest() { Keys = fileKeys };
+            var allowedFiles = await Post<AllowedFilesRequest, List<string>>(request, $"files/allowed", asUserKey, bearerToken);
+            if (logToConsole) { Console.WriteLine($"Retrieved allowed files: Requested='{fileKeys}', Allowed='{allowedFiles}'"); };
+            return allowedFiles;
+        }
+
         public async Task<File> CopyFile(string key, string storageService=null, string asUserKey=null, string bearerToken=null, bool logToConsole=true)
         {
             var copyKey = GenerateKey("file");
