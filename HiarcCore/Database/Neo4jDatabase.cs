@@ -887,12 +887,7 @@ namespace Hiarc.Core.Database
             var session = _neo4j.AsyncSession();
 
             var query = $@" MATCH (u:{LABEL_USER} {{key: '{userKey}'}})-[:{RELATIONSHIP_BELONGS_TO}]->(g:{LABEL_GROUP})
-                            MATCH (f:{LABEL_FILE})<-[:{RELATIONSHIP_CONTAINS}]-(root:{LABEL_COLLECTION})<-[:{accessList}]-(g) 
-                            WHERE f.key IN [{fileList}]
-                            RETURN f.key AS fileKey
-                            UNION
-                            MATCH (u:{LABEL_USER} {{key: '{userKey}'}})-[:{RELATIONSHIP_BELONGS_TO}]->(g:{LABEL_GROUP})
-                            MATCH (f:{LABEL_FILE})<-[:{RELATIONSHIP_CONTAINS}]-(:{LABEL_COLLECTION})-[:{RELATIONSHIP_CHILD_OF}*]->(parent:{LABEL_COLLECTION})<-[:{accessList}]-(g) 
+                            MATCH (f:{LABEL_FILE})<-[:{RELATIONSHIP_CONTAINS}]-(:{LABEL_COLLECTION})-[:{RELATIONSHIP_CHILD_OF}*0..]->(parent:{LABEL_COLLECTION})<-[:{accessList}]-(g) 
                             WHERE f.key IN [{fileList}]
                             RETURN f.key AS fileKey";
 
@@ -909,16 +904,6 @@ namespace Hiarc.Core.Database
             await session.CloseAsync();
 
             return accessResults;
-
-            /*
-                match (u:User {key: 'user-1'})-[:BELONGS_TO]->(g:Group)
-                match (f:File)<-[:CONTAINS]-(root:Collection)<-[:READ_ONLY]-(g) where f.key in ['file-1','file-2']
-                return f.key AS allowedFileKeys
-                UNION
-                match (u:User {key: 'user-1'})-[:BELONGS_TO]->(g:Group)
-                match (f:File)<-[:CONTAINS]-(:Collection)-[:CHILD_OF*]->(parent:Collection)<-[:READ_ONLY]-(g) where f.key in ['file-1','file-2']
-                return f.key AS allowedFileKeys
-            */
         }
 
         public async Task<Collection> GetCollection(string key)

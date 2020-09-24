@@ -338,7 +338,7 @@ namespace HiarcIntegrationTest.Tests
             var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
             await _hiarc.AddFileToCollection(c3.Key, f1.Key); //the root collection
 
-            var fetchedFile = await _hiarc.GetFile(f1.Key, u1.Key);
+            var fetchedFile = await _hiarc.GetFile(f1.Key, asUserKey: u1.Key);
             Assert.Equal(f1, fetchedFile, new EntityComparer());
 
             await _hiarc.DeleteFile(f1.Key);
@@ -361,7 +361,7 @@ namespace HiarcIntegrationTest.Tests
             var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
             await _hiarc.AddFileToCollection(c1.Key, f1.Key); //a parent collection
 
-            var fetchedFile = await _hiarc.GetFile(f1.Key, u1.Key);
+            var fetchedFile = await _hiarc.GetFile(f1.Key, asUserKey: u1.Key);
             Assert.Equal(f1, fetchedFile, new EntityComparer());
 
             await _hiarc.DeleteFile(f1.Key);
@@ -386,7 +386,7 @@ namespace HiarcIntegrationTest.Tests
             var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
             await _hiarc.AddFileToCollection(c3.Key, f1.Key); //the root collection
 
-            var fetchedFile = await _hiarc.GetFile(f1.Key, u1.Key);
+            var fetchedFile = await _hiarc.GetFile(f1.Key, asUserKey: u1.Key);
             Assert.Equal(f1, fetchedFile, new EntityComparer());
 
             await _hiarc.DeleteFile(f1.Key);
@@ -411,7 +411,7 @@ namespace HiarcIntegrationTest.Tests
             var f1 = await _hiarc.CreateFile(_hiarc.BuildPath(TEST_FILE_TINY));
             await _hiarc.AddFileToCollection(c1.Key, f1.Key); //a parent collection
 
-            var fetchedFile = await _hiarc.GetFile(f1.Key, u1.Key);
+            var fetchedFile = await _hiarc.GetFile(f1.Key, asUserKey: u1.Key);
             Assert.Equal(f1, fetchedFile, new EntityComparer());
 
             await _hiarc.DeleteFile(f1.Key);
