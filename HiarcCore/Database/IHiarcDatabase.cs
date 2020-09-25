@@ -67,6 +67,9 @@ namespace Hiarc.Core.Database
         Task<List<RetentionPolicy>> GetAllRetentionPolicies();
         Task<List<RetentionPolicy>> FindRetentionPolicies(FindRetentionPoliciesRequest request);
 
+        Task<LegalHold> GetLegalHold(string key);
+        Task<LegalHold> CreateLegalHold(CreateLegalHoldRequest request);
+
         Task<Classification> GetClassification(string key);
         Task<Classification> CreateClassification(CreateClassificationRequest request);
         Task<Classification> UpdateClassification(string key, UpdateClassificationRequest request);

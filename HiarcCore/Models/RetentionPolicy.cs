@@ -18,11 +18,11 @@ namespace Hiarc.Core.Models
         */
 
         public const uint RETENTION_PERIOD_MINUTE = 60;
-        public const uint RETENTION_PERIOD_HOUR =   3600;
-        public const uint RETENTION_PERIOD_DAY =    86400;
-        public const uint RETENTION_PERIOD_MONTH=   2678400;
-        public const uint RETENTION_PERIOD_YEAR =   31557600;
-        public const uint RETENTION_PERIOD_MAX =    3155760000;
+        public const uint RETENTION_PERIOD_HOUR   = 3600;
+        public const uint RETENTION_PERIOD_DAY    = 86400;
+        public const uint RETENTION_PERIOD_MONTH  = 2678400;
+        public const uint RETENTION_PERIOD_YEAR   = 31557600;
+        public const uint RETENTION_PERIOD_MAX    = 3155760000;
 
         public uint Seconds { get; set; }
 

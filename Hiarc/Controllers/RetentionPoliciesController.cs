@@ -43,10 +43,7 @@ namespace Hiarc.Api.REST.Controllers
             }
             catch(Exception ex)
             {
-                _logger.LogError(ex.Message);
-                var statusCode = StatusCodes.Status500InternalServerError;
-                var error = new Error() { Message=ex.Message };
-                return StatusCode(statusCode, error);
+                return BuildErrorResponse(ex, _logger);
             }   
         }
 

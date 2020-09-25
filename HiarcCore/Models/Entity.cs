@@ -13,6 +13,7 @@ namespace Hiarc.Core.Models
         public const string TYPE_COLLECTION = "collection";
         public const string TYPE_RETENTION_POLICY = "retentionPolicy";
         public const string TYPE_CLASSIFICATION = "classification";
+        public const string TYPE_LEGAL_HOLD = "legalHold";
 
         public string Type { get; set; }
         public string Key { get; set; }

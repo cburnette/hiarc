@@ -31,6 +31,7 @@ namespace Hiarc.Core.Database
         private const string LABEL_GROUP = "Group";
         private const string LABEL_RETENTION_POLICY = "RetentionPolicy";
         private const string LABEL_CLASSIFICATION = "Classification";
+        private const string LABEL_LEGAL_HOLD = "LegalHold";
 
         private const string RELATIONSHIP_BELONGS_TO = "BELONGS_TO";
         private const string RELATIONSHIP_CONTAINS = "CONTAINS";
@@ -1389,6 +1390,43 @@ namespace Hiarc.Core.Database
             return foundPolicies;
         }
 
+        public async Task<LegalHold> GetLegalHold(string key)
+        {
+            var session = _neo4j.AsyncSession();
+            var query = $"MATCH (lh:{LABEL_LEGAL_HOLD} {{key: '{key}'}}) RETURN lh";
+            _logger.LogDebug($"Executing query: {query}");
+
+            var result = await session.RunAsync(query);
+            var record = await result.SingleAsync();
+            await session.CloseAsync();
+
+            var legalHold = record["lh"].As<INode>();
+            var theLegalHold = LegalHoldFromNode(legalHold);
+
+            return theLegalHold;
+        }
+
+        public async Task<LegalHold> CreateLegalHold(CreateLegalHoldRequest request)
+        {
+            var session = _neo4j.AsyncSession();
+
+            var propertyQueryParts = BuildEntityQueryParts(request, false);
+            var propertyQuery = string.Join(", ", propertyQueryParts);
+            var query = $@"CREATE (lh:{LABEL_LEGAL_HOLD} {{ {propertyQuery} }}) RETURN lh";
+            _logger.LogDebug($"Executing query: {query}");
+
+            var result = await session.RunAsync(query);
+            var record = await result.SingleAsync();
+            await session.CloseAsync();
+
+            var legalHold = record["lh"].As<INode>();
+            var newLegalHold = LegalHoldFromNode(legalHold);
+
+            //await _eventService.SendClassificationCreatedEvent(newGroup);
+
+            return newLegalHold;
+        }
+
         public async Task<Classification> GetClassification(string key)
         {
             var session = _neo4j.AsyncSession();
@@ -1558,6 +1596,13 @@ namespace Hiarc.Core.Database
             };
 
             return rpa;
+        }
+
+        private LegalHold LegalHoldFromNode(INode node)
+        {
+            var lh = new LegalHold();
+            ExtractEntityProperties(lh, node);
+            return lh;
         }
 
         private Classification ClassificationFromNode(INode node)

@@ -28,6 +28,7 @@ namespace HiarcIntegrationTest
         private int currUser = 1;
         private int currGroup = 1;
         private int currRetentionPolicy = 1;
+        private int currLegalHold = 1;
         private int currClassification = 1;
 
         public HiarcClient()
@@ -538,6 +539,22 @@ namespace HiarcIntegrationTest
             return foundPolicies;
         }
 
+        public async Task<LegalHold> GetLegalHold(string key, string asUserKey=null, string bearerToken=null, bool logToConsole=true)
+        {
+            var legalHold = await Get<LegalHold>($"legalholds/{key}", asUserKey, bearerToken);
+            if (logToConsole) { Console.WriteLine($"Fetched Legal Hold: {ToJson(legalHold)}"); };
+            return legalHold;
+        }
+
+        public async Task<LegalHold> CreateLegalHold(Dictionary<string, object> metadata=null, string asUserKey=null, string bearerToken=null, bool logToConsole=true)
+        {
+            var key = GenerateKey("legalHold");
+            var createLegalHoldRequest = new CreateLegalHoldRequest() { Key = key, Name = $"name-{key}", Description = "Lobster taco legal hold", Metadata = metadata };
+            var newLegalHold = await Post<CreateLegalHoldRequest,LegalHold>(createLegalHoldRequest, "legalholds", asUserKey, bearerToken);
+            if (logToConsole) { Console.WriteLine($"Created New Legal Hold: {ToJson(newLegalHold)}\""); };
+            return newLegalHold;
+        }
+
         public async Task<Classification> GetClassification(string key, string asUserKey=null, string bearerToken=null, bool logToConsole=true)
         {
             var classification = await Get<Classification>($"classifications/{key}", asUserKey, bearerToken);
@@ -706,6 +723,7 @@ namespace HiarcIntegrationTest
             "user" => $"{prefix}-{currUser++}",
             "group" => $"{prefix}-{currGroup++}",
             "retentionPolicy" => $"{prefix}-{currRetentionPolicy++}",
+            "legalHold" => $"{prefix}-{currLegalHold++}",
             "classification" => $"{prefix}-{currClassification++}",
             _ => $"{prefix}-{Guid.NewGuid()}",
         };
