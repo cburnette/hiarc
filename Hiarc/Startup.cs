@@ -60,7 +60,7 @@ namespace Hiarc
                 .AddApiKeySupport(options => {})
                 .AddJwtBearer(Auth.JWT_BEARER_SCHEME, options =>
                 {
-                    options.RequireHttpsMetadata = false;
+                    options.RequireHttpsMetadata = true;
                     options.SaveToken = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -87,15 +87,12 @@ namespace Hiarc
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<HiarcSettings> hiarchSettings)
+        public void Configure(IApplicationBuilder app, IOptions<HiarcSettings> hiarchSettings)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            if (string.IsNullOrEmpty(hiarchSettings.Value.ForceHTTPS) || hiarchSettings.Value.ForceHTTPS.ToLower() == "true")
-            {
+            // The default is to NOT use Https redirection as Hiarc is most commonly accessed behind the firewall.
+            // However, if you wish to allow direct access to Hiarc from mobile devices or Javascript you should set ForceHTTPS to true in your settings
+            if (!string.IsNullOrEmpty(hiarchSettings.Value.ForceHTTPS) && hiarchSettings.Value.ForceHTTPS.ToLower() == "true")
+            {     
                 app.UseHttpsRedirection();
             }
 
