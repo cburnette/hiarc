@@ -5,7 +5,6 @@
 - add logging for all query calls to Neo4j
 - update the InvalidOperation stuff in the controllers (needs to be everywhere)
 - investigate making file versions a linked list
-- Nullable model fields (seems to be working, actually)
 - auto-created keys
 - adjust permissions for Groups, Collections, etc
 - decide what to return for PUT requests
