@@ -5,6 +5,7 @@ using Hiarc.Configuration.Strategies.Models;
 using Hiarc.Core.Settings;
 using Hiarc.Core.Settings.Events;
 using Hiarc.Core.Settings.Storage;
+using HiarcCore.Settings.KeyStore;
 using static Hiarc.Configuration.Strategies.HiarcConfigurationUtility;
 
 namespace Hiarc.Configuration.Strategies
@@ -28,9 +29,17 @@ namespace Hiarc.Configuration.Strategies
             {
                 PropertyNameCaseInsensitive = true,
             });
-            
+
             Load<HiarcSettingsModel>(settings, set);
             Load<HiarcDatabaseSettings>(settings.Database, set);
+            Load<HiarcKeyStoreSettings>(settings.KeyStore, set);
+            Load<KeyStoreServiceStorageSettings>(settings.KeyStore.StorageSettings, set);
+            if (settings.KeyStore.EncryptionSettings != null)
+            {
+                Load<KeyStoreServiceEncryptionSettings>(settings.KeyStore.EncryptionSettings, set);
+                ProcessKeyStoreEncryptionService(settings.KeyStore.EncryptionSettings, set);
+            }
+            ProcessKeyStoreStorageService(settings.KeyStore.StorageSettings, set);
 
             for (int i = 0; i < settings.StorageServices.Length; i++)
             {

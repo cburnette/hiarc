@@ -15,6 +15,9 @@ using Hiarc.Core.Settings.Storage.AWS;
 using Hiarc.Core.Settings.Storage.Azure;
 using Hiarc.Core.Settings.Storage.Google;
 using Hiarc.Core.Storage;
+using HiarcCore.Settings.KeyStore;
+using HiarcCore.Settings.KeyStore.Encryption.Certificate;
+using HiarcCore.Settings.KeyStore.Storage.Redis;
 using Microsoft.Extensions.Configuration;
 
 namespace Hiarc.Configuration.Strategies
@@ -28,6 +31,7 @@ namespace Hiarc.Configuration.Strategies
         // public const string FORCE_HTTPS_SETTING = "ForceHTTPS";
         // public const string JWT_EXPIRATION_SETTING = "JWTTokenExpirationMinutes";
         public const string DATABASE_SETTING = "Database";
+        public const string KEYSTORE_SETTING = "KeyStore";
         // public const string DATABASE_URI_SETTING = "Uri";
         // public const string DATABASE_USERNAME_SETTING = "Username";
         // public const string DATABASE_PASSWORD_SETTING = "Password";
@@ -35,6 +39,9 @@ namespace Hiarc.Configuration.Strategies
         public const string EVENT_SERVICES_SETTING = "EventServices";
         public const string CONFIG_SETTING = "Config";
         public static readonly string HIARC_DATABASE_CONFIG_KEY = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{DATABASE_SETTING}";
+        public static readonly string HIARC_KEYSTORE_CONFIG_KEY = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{KEYSTORE_SETTING}";
+        public static readonly string HIARC_KEYSTORE_SERVICE_STORAGE_SETTING = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{KEYSTORE_SETTING}{ConfigurationPath.KeyDelimiter}StorageSettings";
+        public static readonly string HIARC_KEYSTORE_SERVICE_ENCRYPTION_SETTING = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{KEYSTORE_SETTING}{ConfigurationPath.KeyDelimiter}EncryptionSettings";
         public static readonly string HIARC_STORAGE_SERVICES_CONFIG_KEY = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{STORAGE_SERVICES_SETTING}";
         public static readonly string HIARC_EVENT_SERVICES_CONFIG_KEY = $"{HIARC_SETTING}{ConfigurationPath.KeyDelimiter}{EVENT_SERVICES_SETTING}";
 
@@ -48,6 +55,11 @@ namespace Hiarc.Configuration.Strategies
         {
             {typeof(HiarcSettingsModel), HIARC_SETTING},
             {typeof(HiarcDatabaseSettings), HIARC_DATABASE_CONFIG_KEY},
+            {typeof(HiarcKeyStoreSettings), HIARC_KEYSTORE_CONFIG_KEY},
+            {typeof(KeyStoreServiceStorageSettings), HIARC_KEYSTORE_SERVICE_STORAGE_SETTING},
+            {typeof(KeyStoreServiceEncryptionSettings), HIARC_KEYSTORE_SERVICE_ENCRYPTION_SETTING},
+            {typeof(KeyStoreCertificate), HIARC_KEYSTORE_SERVICE_ENCRYPTION_SETTING},
+            {typeof(RedisSettings), HIARC_KEYSTORE_SERVICE_STORAGE_SETTING},
             {typeof(StorageServiceSetting), HIARC_STORAGE_SERVICES_CONFIG_KEY},
             {typeof(EventServiceSetting), HIARC_EVENT_SERVICES_CONFIG_KEY},
             {typeof(S3Settings), HIARC_STORAGE_SERVICES_CONFIG_KEY},
@@ -66,7 +78,9 @@ namespace Hiarc.Configuration.Strategies
             typeof(KinesisSettings),
             typeof(ServiceBusSettings),
             typeof(PubSubSettings),
-            typeof(WebhookSettings)
+            typeof(WebhookSettings),
+            typeof(RedisSettings),
+            typeof(KeyStoreCertificate)
         };
         public static IEnumerable<(string k, string v)> CreateConfigFromProperties(string prefix, object o, IEnumerable<PropertyInfo> props, int i = -1, bool withConfig = false)
         {
@@ -109,6 +123,36 @@ namespace Hiarc.Configuration.Strategies
             foreach (var p in config)
             {
                 set(p.k, p.v);
+            }
+        }
+        public static void ProcessKeyStoreStorageService(KeyStoreServiceStorageSettings stt, Action<string, string> set)
+        {
+            if (stt.Provider.ToLower() == KeyStoreServiceStorageSettings.REDIS)
+            {
+                Load<RedisSettings>(new RedisSettings
+                {
+                    ConnectionString = ((dynamic)stt.Config).ConnectionString.ToString(),
+                    KeySuffix = string.IsNullOrEmpty(((dynamic)stt.Config).KeySuffix.ToString()) ? "" : ((dynamic)stt.Config).KeySuffix.ToString()
+                }, set);
+            }
+            else
+            {
+                throw new Exception($"Unsupported keystore storage service provider: {stt.Provider}");
+            }
+        }
+        public static void ProcessKeyStoreEncryptionService(KeyStoreServiceEncryptionSettings stt, Action<string, string> set)
+        {
+            if (stt.Provider.ToLower() == KeyStoreServiceEncryptionSettings.INLINE)
+            {
+                Load<KeyStoreCertificate>(new KeyStoreCertificate
+                {
+                    EncodedCert = ((dynamic)stt.Config).EncodedCert.ToString(),
+                    Password = string.IsNullOrEmpty(((dynamic)stt.Config).Password.ToString()) ? "" : ((dynamic)stt.Config).Password.ToString()
+                }, set);
+            }
+            else
+            {
+                throw new Exception($"Unsupported keystore storage service provider: {stt.Provider}");
             }
         }
         public static void ProcessStorageServices(StorageServiceSetting stt, Action<string, string> set, int i)

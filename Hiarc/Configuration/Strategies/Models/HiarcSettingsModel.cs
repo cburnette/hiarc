@@ -12,6 +12,7 @@ namespace Hiarc.Configuration.Strategies.Models
         public bool ForceHTTPS { get; set; }
         public int JWTTokenExpirationMinutes { get; set; }
         public HiarcDatabaseSettings Database { get; set; }
+        public HiarcKeyStoreSettings KeyStore { get; set; }
         public StorageServiceSetting[] StorageServices { get; set; }
         public EventServiceSetting[] EventServices { get; set; }
     }

@@ -1,5 +1,6 @@
 ﻿using Hiarc.Core.Settings.Events;
 using Hiarc.Core.Settings.Storage;
+using HiarcCore.Settings.KeyStore;
 
 namespace Hiarc.Core.Settings
 {
@@ -11,6 +12,7 @@ namespace Hiarc.Core.Settings
         public string ForceHTTPS { get; set; }
         public int JWTTokenExpirationMinutes { get; set; }
         public HiarcDatabaseSettings Database { get; set; }
+        public HiarcKeyStoreSettings KeyStore { get; set; }
         public StorageServiceSetting[] StorageServices { get; set; }
         public EventServiceSetting[] EventServices { get; set; }
     }
@@ -20,5 +22,11 @@ namespace Hiarc.Core.Settings
         public string Uri { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+    }
+
+    public class HiarcKeyStoreSettings
+    {
+        public KeyStoreServiceStorageSettings StorageSettings { get; set; }
+        public KeyStoreServiceEncryptionSettings EncryptionSettings { get; set; } = null;
     }
 }
