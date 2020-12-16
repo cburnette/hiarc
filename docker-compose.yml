@@ -1,7 +1,7 @@
 version: "3.8"
 services:
     neo:
-        build: 
+        build:
             context: ./neo
             dockerfile: Dockerfile.Neo
         ports:
@@ -10,17 +10,28 @@ services:
             - "7473:7473"
         environment:
             - NEO4J_AUTH=neo4j/demo1234
+    redis:
+        image: redis:4.0.5-alpine
+        command: redis-server --appendonly yes --requirepass demo1234
+        hostname: redis
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis-data:/data
     hiarc:
         depends_on:
             - neo
-        build: 
+            - redis
+        build:
             context: .
             dockerfile: Dockerfile.Hiarc
         ports:
-          - target: 80
-            published: 5000
-            protocol: tcp
-            mode: host
-        environment: 
+            - target: 80
+              published: 5000
+              protocol: tcp
+              mode: host
+        environment:
             - HIARC_CONFIG_STRATEGY=env
             - HIARC_SETTINGS=<base64 encoded json>
+volumes:
+    redis-data:

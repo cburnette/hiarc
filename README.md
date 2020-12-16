@@ -88,6 +88,24 @@ Copy the string in `appsettings.txt` and replace `HIARC_SETTINGS=<base64 encoded
         "Username": "<neo4j-username>",
         "Password": "<neo4j-password>"
     },
+    "KeyStore": {
+        "StorageSettings": {
+            "Provider": "redis",
+            "Name": "redis-store",
+            "Config": {
+                "ConnectionString": "localhost:6379",
+                "KeySuffix": "-finance"
+            }
+        },
+        "EncryptionSettings": {
+            "Provider": "inline",
+            "Name": "inline-cert",
+            "Config": {
+                "EncodedCert": "<base64 encoded .pfx certificate>",
+                "Password": "securepassword"
+            }
+        }
+    },
     "StorageServices": [
         {
             "Provider": "AWS-S3",
