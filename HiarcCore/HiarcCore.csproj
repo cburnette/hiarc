@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <NullableReferenceTypes>true</NullableReferenceTypes>
   </PropertyGroup>
 
@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
-    <PackageReference Include="Neo4j.Driver" Version="4.0.1" />
+    <PackageReference Include="Neo4j.Driver" Version="4.4.0" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.108.4" />
     <PackageReference Include="AWSSDK.Kinesis" Version="3.3.100.119" />
     <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.1.2" />

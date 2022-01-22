@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hiar", "Hiarc\Hiarc.csproj", "{87CA978C-C331-4A74-8554-6850ED3BB2F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hiarc", "Hiarc\Hiarc.csproj", "{87CA978C-C331-4A74-8554-6850ED3BB2F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiarcCore", "HiarcCore\HiarcCore.csproj", "{72851D01-EB39-4E78-BB6C-C4F6084F1514}"
 EndProject
