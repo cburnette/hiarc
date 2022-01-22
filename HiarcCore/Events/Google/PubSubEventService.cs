@@ -42,7 +42,7 @@ namespace Hiarc.Core.Events.Google
                 var serializedEvent = JsonSerializer.Serialize(theEvent);     
 
                 var topicName = new TopicName(_pubSubSettings.ProjectId, _pubSubSettings.Topic);
-                var sacByteArray = Encoding.UTF8.GetBytes(_pubSubSettings.ServiceAccountCredential);
+                var sacByteArray = System.Text.Encoding.UTF8.GetBytes(_pubSubSettings.ServiceAccountCredential);
                 var sacStream = new MemoryStream(sacByteArray);
                 var credential = GoogleCredential.FromServiceAccountCredential(ServiceAccountCredential.FromServiceAccountData(sacStream));
                 var createSettings = new ClientCreationSettings(credentials: credential.ToChannelCredentials());
